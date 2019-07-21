@@ -61,7 +61,7 @@ clean: ## Remove the target directory
 	$(CARGO_COMMAND) clean
 
 install: ## Install to $(PREFIX) directory
-	$(CARGO_COMMAND) install --force --root $(PREFIX) --path . --target $(TARGET)
+	$(CARGO_COMMAND) install --force --root $(PREFIX) --path . $(CARGO_SUB_OPTIONS)
 
 fmt: ## Run fmt
 	$(CARGO_COMMAND) fmt
