@@ -72,7 +72,7 @@ SUBCOMMANDS:
 - Install binary directly
 
 ```
-❯❯ curl https://raw.githubusercontent.com/watawuwu/bump/master/install.sh | sh
+❯❯ curl --tlsv1.2 -sSf https://raw.githubusercontent.com/watawuwu/bump/master/install.sh | sh
 ```
 
 - Install with cargo
