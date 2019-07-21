@@ -39,7 +39,7 @@ pool:
   vmImage: $(imageName)
 variables:
   RUSTUP_TOOLCHAIN: stable
-  NAME=bump
+  NAME: bump
 steps:
 - script: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
