@@ -2,10 +2,10 @@ strategy:
   matrix:
     musl:
       target: 'x86_64-unknown-linux-musl'
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-18.04'
     gnu:
       target: 'x86_64-unknown-linux-gnu'
-      imageName: 'ubuntu-16.04'
+      imageName: 'ubuntu-18.04'
     mac:
       target: 'x86_64-apple-darwin'
       imageName: 'macos-10.13'
@@ -20,12 +20,14 @@ steps:
   - script: |
       curl -sSf -o rustup-init.exe https://win.rustup.rs
       rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
-      rustup.exe show
       echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
+      rustup.exe update
+      rustup.exe show
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
     displayName: Windows install rust
   - script: |
       curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
+      rustup update
       rustup show
       echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
