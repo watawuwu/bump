@@ -98,6 +98,8 @@ jobs:
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
 
 - job: release
+  workspace:
+    clean: resources
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: build
