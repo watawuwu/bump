@@ -1,0 +1,109 @@
+# bump
+
+bump is a simple tool to increment [semver](https://semver.org/)-like versions.
+
+## Getting Started
+
+- Bump patch version
+
+```
+❯❯ bump patch 1.0.0
+1.0.1
+```
+
+- Bump minor version
+
+```
+❯❯ bump minor 1.0.0
+1.1.0
+```
+
+- Bump major version
+
+```
+❯❯ bump major 1.0.0
+2.0.0
+```
+
+- Replace pre release version
+
+```
+❯❯ bump pre beta.0 1.0.0-alpha.0
+2.0.0-beta.0
+```
+
+- Replace build release version
+
+```
+❯❯ bump build 20190720CCDD 1.0.0+20190720AABB
+1.0.0+20190720CCDD
+```
+
+- If semver has the version prefix "v", bump ignore the prefix.
+
+```
+❯❯ bump patch v1.0.0
+v1.0.1
+```
+
+- Other usage
+
+```
+Wataru Matsui <watawuwu@3bi.tech>
+
+USAGE:
+    bump <SUBCOMMAND>
+
+FLAGS:
+    -h, --help       Prints help information
+    -V, --version    Prints version information
+
+SUBCOMMANDS:
+    build    Replace build metadata
+    help     Prints this message or the help of the given subcommand(s)
+    major    Increment major version
+    minor    Increment minor version
+    patch    Increment patch version
+    pre      Replace pre-release version
+```
+
+### Installing
+
+- Install binary directly
+
+```
+❯❯ curl https://raw.githubusercontent.com/watawuwu/bump/master/install.sh | sh
+```
+
+- Install with cargo
+
+```
+❯❯ git clone https://github.com/watawuwu/bump.git && cd bump
+
+❯❯ make install
+```
+
+
+## Contributing
+
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning.
+
+## License
+This project is licensed under either of
+
+- Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+- MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
+
+## Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted for inclusion in the work by you, as defined in the Apache-2.0 license, shall be dual licensed as above, without any additional terms or conditions.
+
+## Authors
+
+* [Wataru Matsui](watawuwu@3bi.tech)

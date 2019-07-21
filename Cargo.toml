@@ -1,0 +1,29 @@
+[package]
+name        = "bump"
+version     = "0.1.0"
+authors     = ["Wataru Matsui <watawuwu@3bi.tech>"]
+exclude     = ["examples/*", "tests/*", "benches/*", "*.png", "perf/*", "assets", "Makefile", "tmp.rs"]
+readme      = "README.md"
+edition     = "2018"
+license     = "MIT/Apache-2.0"
+description = ""
+repository  = "https://github.com/watawuwu/bump"
+
+[badges]
+is-it-maintained-issue-resolution = { repository = "watawuwu/bump", service = "github" }
+is-it-maintained-open-issues      = { repository = "watawuwu/bump", service = "github" }
+maintenance                       = { status = "passively-maintained" }
+
+[dependencies]
+failure           = "0.1"
+log               = "0.4"
+pretty_env_logger = "0.3"
+structopt         = "0.2"
+semver            = "0.9"
+
+[features]
+default = []
+
+[dev-dependencies]
+tempdir           = "0.3"
+
