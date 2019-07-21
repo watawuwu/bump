@@ -89,8 +89,21 @@ jobs:
       tar czf %NAME%-%BUILD_SOURCEBRANCHNAME%-%TARGET%.tar.gz -C target/%TARGET%/release %NAME%.exe
     displayName: Build for Windows
     condition: and(eq( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-  - upload: '$(NAME)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
-    artifact: BumpBinary
+  # - upload: '$(NAME)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
+  #   artifact: BumpBinary
+  #   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+  - task: CopyFiles@2
+    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      sourceFolder: '$(System.DefaultWorkingDirectory)'
+      Contents: '*.tar.gz'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      artifactName: BumpBinary
+    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
 
 - job: release
   pool:
