@@ -14,6 +14,8 @@ strategy:
       imageName: 'vs2017-win2016'
 pool:
   vmImage: $(imageName)
+parameters:
+  rustup_toolchain: stable
 steps:
   - script: |
       curl -sSf -o rustup-init.exe https://win.rustup.rs
@@ -27,7 +29,7 @@ steps:
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
     displayName: Install rust
   - script: rustup component add rustfmt
-    displayName: Install Rustfmt    
+    displayName: Install Rustfmt
   - script: rustup component add clippy
     displayName: Install Clippy
   - script: |
@@ -48,4 +50,3 @@ steps:
     displayName: Test
   - script: cross build --all --target $TARGET --release
     displayName: Build
-    
