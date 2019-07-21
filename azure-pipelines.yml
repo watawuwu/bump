@@ -92,19 +92,27 @@ jobs:
   - task: CopyFiles@2
     displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
     inputs:
-      SourceFolder: '$(System.DefaultWorkingDirectory)'
+      sourceFolder: '$(System.DefaultWorkingDirectory)'
       Contents: '*.tar.gz'
-      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      targetFolder: '$(Build.ArtifactStagingDirectory)'
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish to: $(Build.ArtifactStagingDirectory)'
+    inputs:
+      pathtoPublish: $(Build.ArtifactStagingDirectory)
+      artifactName: BumpBinary
     condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
 
 - job: release
-  workspace:
-    clean: resources
   pool:
     vmImage: 'ubuntu-16.04'
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
   steps:
+  - task: DownloadBuildArtifacts@0
+    displayName: 'Download Build Artifacts'
+    inputs:
+      artifactName: BumpBinary
+      downloadPath: $(System.DefaultWorkingDirectory)
   - task: GithubRelease@0
     displayName: Create GitHub Release
     inputs:
