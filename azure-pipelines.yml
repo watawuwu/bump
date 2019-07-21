@@ -120,5 +120,5 @@ jobs:
       repositoryName: watawuwu/bump
       tag: $(Build.BuildNumber)
       assets: |
-        $(Build.ArtifactStagingDirectory)/*.tar.gz
+        $(System.DefaultWorkingDirectory)/*.tar.gz
 
