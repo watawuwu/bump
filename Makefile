@@ -16,7 +16,7 @@ LOG                     := $(shell echo '$(name)' | tr - _)=$(LOG_LEVEL)
 TARGET                  := x86_64-apple-darwin
 TOOLCHAIN               := stable
 CARGO_BIN               := cross
-ifeq ($(OS),Windows_NT)
+ifneq (,$(findstring mingw64, $(OS)))
     CARGO_BIN := cargo
 endif
 CARGO_OPTIONS           :=
