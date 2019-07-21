@@ -59,7 +59,7 @@ jobs:
       rustup.exe update
       rustup.exe show
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
-    displayName: Windows install rust
+    displayName: Install rust for Windows
   - script: make deps
     displayName: Install build dependencies
   - script: |
@@ -81,26 +81,16 @@ jobs:
     condition: eq( variables['Agent.OS'], 'Windows_NT' )
   - script: |
       make release-build TARGET=$TARGET
-      tar czf ${NAME}-${BUILD_BUILDNUMBER}-${TARGET}.tar.gz -C target/${TARGET}/release ${NAME}
+      tar czf ${NAME}-${BUILD_SOURCEBRANCHNAME}-${TARGET}.tar.gz -C target/${TARGET}/release ${NAME}
     displayName: Build
     condition: and(ne( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
   - script: |
       make release-build TARGET=%TARGET%
-      tar czf %NAME%-%BUILD_BUILDNUMBER%-%TARGET%.tar.gz -C target/%TARGET%/release %NAME%.exe
+      tar czf %NAME%-%BUILD_SOURCEBRANCHNAME%-%TARGET%.tar.gz -C target/%TARGET%/release %NAME%.exe
     displayName: Build for Windows
     condition: and(eq( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      sourceFolder: '$(System.DefaultWorkingDirectory)'
-      Contents: '*.tar.gz'
-      targetFolder: '$(Build.ArtifactStagingDirectory)'
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      pathtoPublish: $(Build.ArtifactStagingDirectory)
-      artifactName: BumpBinary
-    condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+  - upload: '$(NAME)-$(Build.SourceBranchName)-$(TARGET).tar.gz'
+    artifact: BumpBinary
 
 - job: release
   pool:
@@ -108,17 +98,14 @@ jobs:
   dependsOn: build
   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
   steps:
-  - task: DownloadBuildArtifacts@0
-    displayName: 'Download Build Artifacts'
-    inputs:
-      artifactName: BumpBinary
-      downloadPath: $(System.DefaultWorkingDirectory)
+  - checkout: none
+  - download: current
+    name: BumpBinary
   - task: GithubRelease@0
     displayName: Create GitHub Release
     inputs:
       gitHubConnection: github-watawuwu
       repositoryName: watawuwu/bump
       tag: $(Build.BuildNumber)
-      assets: |
-        $(System.DefaultWorkingDirectory)/*.tar.gz
+      assets: '$(Pipeline.Workspace)/BumpBinary/*.tar.gz'
 

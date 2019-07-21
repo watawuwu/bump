@@ -86,8 +86,8 @@ main() {
 }
 
 get_latest_tag() {
-    local tag_file=$1
-    tag=$(cat tag_file | grep  '"tag_name":' | sed -e 's/"tag_name": "\(.*\)",/\1/g')
+    local _tag_file=$1
+    tag=$(cat $_tag_file | grep  '"tag_name":' | sed -e 's/"tag_name": "\(.*\)",/\1/g')
     echo $tag
 }
 
