@@ -28,10 +28,8 @@ steps:
       echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
     condition: ne( variables['Agent.OS'], 'Windows_NT' )
     displayName: Install rust
-  - script: rustup component add rustfmt
-    displayName: Install Rustfmt
-  - script: rustup component add clippy
-    displayName: Install Clippy
+  - script: make deps
+    displayName: Install build dependencies
   - script: |
       set -eou
       D=$(mktemp -d)
@@ -42,11 +40,7 @@ steps:
       cargo install --path .
       rm -rf "$D"
     displayName: Install cross
-  - script: |
-      cross fmt
-      cross clippy --target $TARGET
-    displayName: Lint
-  - script: cross test --all --target $TARGET
+  - script: make fmt-check test TARGET=$TARGET
     displayName: Test
-  - script: cross build --all --target $TARGET --release
+  - script: make release-build TARGET=$TARGET
     displayName: Build

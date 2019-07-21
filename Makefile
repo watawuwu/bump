@@ -13,10 +13,11 @@ SHELL                   := /bin/bash
 LOG_LEVEL               := debug
 PREFIX                  := $(HOME)/.cargo
 LOG                     := $(shell echo '$(name)' | tr - _)=$(LOG_LEVEL)
-CARGO_TOOLCHAIN         := stable
+TARGET                  := x86_64-apple-darwin
+TOOLCHAIN               := stable
 CARGO_OPTIONS           :=
-CARGO_SUB_OPTIONS       :=
-CARGO_COMMAND           := cargo +$(CARGO_TOOLCHAIN) $(CARGO_OPTIONS)
+CARGO_SUB_OPTIONS       := --target $(TARGET)
+CARGO_COMMAND           := cross +$(TOOLCHAIN) $(CARGO_OPTIONS)
 APP_ARGS                := patch 1.0.0
 
 # Environment
@@ -27,9 +28,11 @@ export RUST_BACKTRACE=1
 # Task
 #===============================================================
 deps: ## Install depend tools
-	rustup component add rust-src
 	rustup component add rustfmt
 	rustup component add clippy
+
+dev-deps: ## Install dev depend tools
+	rustup component add rust-src
 	$(CARGO_COMMAND) install --force cargo-outdated
 
 run: lint ## Execute a main.rs
@@ -44,28 +47,31 @@ check: ## Check syntax, but don't build object files
 build: ## Build all project
 	$(CARGO_COMMAND) build $(CARGO_SUB_OPTIONS)
 
+check-lib: ## Check module version
+	$(CARGO_COMMAND) outdated
+
 update: ## Update modules
 	$(CARGO_COMMAND) update
-
-check-dep: ## Check dep version
-	$(CARGO_COMMAND) outdated
 
 clean: ## Remove the target directory
 	$(CARGO_COMMAND) clean
 
 install: ## Install to $(PREFIX) directory
-	$(CARGO_COMMAND) install --force --root $(PREFIX) --path .
+	$(CARGO_COMMAND) install --force --root $(PREFIX) --path . --target $(TARGET)
 
 fmt: ## Run fmt
 	$(CARGO_COMMAND) fmt
 
+fmt-check: ## Run fmt
+	$(CARGO_COMMAND) fmt --all -- --check
+
 clippy: ## Run clippy
-	$(CARGO_COMMAND) clippy
+	$(CARGO_COMMAND) clippy --all-features -- -D warnings
 
 lint: fmt clippy ## Run fmt and clippy
 
 release-build: ## Build all project
-	$(MAKE) build CARGO_SUB_OPTIONS="--release"
+	$(MAKE) build CARGO_SUB_OPTIONS="$(CARGO_SUB_OPTIONS) --release"
 
 help: ## Print help
 	echo -e "Usage: make [task]\n\nTasks:"
