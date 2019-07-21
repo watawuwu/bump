@@ -18,14 +18,6 @@ variables:
   RUSTUP_TOOLCHAIN: stable
 steps:
 - script: |
-    curl -sSf -o rustup-init.exe https://win.rustup.rs
-    rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
-    echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
-    rustup.exe update
-    rustup.exe show
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: Windows install rust
-- script: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
     rustup update
     rustup show
@@ -33,6 +25,14 @@ steps:
     echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
   condition: ne( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install rust
+- script: |
+    curl -sSf -o rustup-init.exe https://win.rustup.rs
+    rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
+    echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
+    rustup.exe update
+    rustup.exe show
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: Windows install rust
 - script: make deps
   displayName: Install build dependencies
 - script: |
@@ -44,8 +44,17 @@ steps:
     git apply patch
     cargo install --path .
     rm -rf "$D"
+  condition: ne( variables['Agent.OS'], 'Windows_NT' )
   displayName: Install cross
 - script: make fmt-check test TARGET=$TARGET
   displayName: Test
+  condition: ne( variables['Agent.OS'], 'Windows_NT' )
+- script: make fmt-check test TARGET=%TARGET%
+  displayName: Test for Windows
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
 - script: make release-build TARGET=$TARGET
   displayName: Build
+  condition: ne( variables['Agent.OS'], 'Windows_NT' )
+- script: make release-build TARGET=%TARGET%
+  displayName: Build for Windows
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
