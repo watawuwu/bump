@@ -15,23 +15,22 @@ strategy:
 pool:
   vmImage: $(imageName)
 steps:
-   - displayName: Windows install rust
-     condition: eq( variables['Agent.OS'], 'Windows_NT' )
-     script: |
-       curl -sSf -o rustup-init.exe https://win.rustup.rs
-       rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
-       echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
-   - displayName: Install rust
-     condition: ne( variables['Agent.OS'], 'Windows_NT' )
-     script: |
-       curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
-       echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
-  - displayName: Install Rustfmt
-    script: rustup component add rustfmt
-  - displayName: Install Clippy
-    script: rustup component add clippy
-  - displayName: Install cross
-    script: |
+  - script: |
+      curl -sSf -o rustup-init.exe https://win.rustup.rs
+      rustup-init.exe -y --default-toolchain %RUSTUP_TOOLCHAIN%
+      echo "##vso[task.setvariable variable=PATH;]%PATH%;%USERPROFILE%\.cargo\bin"
+    condition: eq( variables['Agent.OS'], 'Windows_NT' )
+    displayName: Windows install rust
+  - script: |
+      curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
+      echo "##vso[task.setvariable variable=PATH;]$PATH:$HOME/.cargo/bin"
+    condition: ne( variables['Agent.OS'], 'Windows_NT' )
+    displayName: Install rust
+  - script: rustup component add rustfmt
+    displayName: Install Rustfmt    
+  - script: rustup component add clippy
+    displayName: Install Clippy
+  - script: |
       set -eou
       D=$(mktemp -d)
       git clone https://github.com/rust-embedded/cross.git "$D"
@@ -40,11 +39,13 @@ steps:
       git apply patch
       cargo install --path .
       rm -rf "$D"
-  - displayName: Lint
-    script: |
+    displayName: Install cross
+  - script: |
       cross fmt
       cross clippy --target $TARGET
-  - displayName: Test
-    script: cross test --all --target $TARGET
-  - displayName: Build
-    script: cross build --all --target $TARGET --release
+    displayName: Lint
+  - script: cross test --all --target $TARGET
+    displayName: Test
+  - script: cross build --all --target $TARGET --release
+    displayName: Build
+    
