@@ -4,6 +4,9 @@ trigger:
     - '*'
     exclude:
     - test/*
+  tags:
+    include:
+    - '*'
   paths:
     exclude:
     - README.md
@@ -36,6 +39,7 @@ pool:
   vmImage: $(imageName)
 variables:
   RUSTUP_TOOLCHAIN: stable
+  NAME=bump
 steps:
 - script: |
     curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain $RUSTUP_TOOLCHAIN
@@ -72,9 +76,22 @@ steps:
 - script: make fmt-check test TARGET=%TARGET%
   displayName: Test for Windows
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
-- script: make release-build TARGET=$TARGET
+- script: |
+    make release-build TARGET=$TARGET
+    tar czf ${NAME}-${BUILD_BUILDNUMBER}-${TARGET}.tar.gz -C target/${TARGET}/release ${NAME}
   displayName: Build
-  condition: ne( variables['Agent.OS'], 'Windows_NT' )
-- script: make release-build TARGET=%TARGET%
+  condition: and(ne( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+- script: |
+    make release-build TARGET=%TARGET%
+    tar czf %NAME%-%BUILD_BUILDNUMBER%-%TARGET%.tar.gz -C target/%TARGET%/release %NAME%.exe
   displayName: Build for Windows
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  condition: and(eq( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+- task: GithubRelease@0
+  displayName: Create GitHub Release
+  inputs:
+    gitHubConnection: watawuwu
+    repositoryName: watawuwu/bump
+    tag: $(Build.BuildNumber)
+    assets: |
+      $(Build.ArtifactStagingDirectory)/*.tar.gz
+  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
