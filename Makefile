@@ -15,9 +15,13 @@ PREFIX                  := $(HOME)/.cargo
 LOG                     := $(shell echo '$(name)' | tr - _)=$(LOG_LEVEL)
 TARGET                  := x86_64-apple-darwin
 TOOLCHAIN               := stable
+CARGO_BIN               := cross
+ifeq ($(OS),Windows_NT)
+    CARGO_BIN := cargo
+endif
 CARGO_OPTIONS           :=
 CARGO_SUB_OPTIONS       := --target $(TARGET)
-CARGO_COMMAND           := cross +$(TOOLCHAIN) $(CARGO_OPTIONS)
+CARGO_COMMAND           := $(CARGO_BIN) +$(TOOLCHAIN) $(CARGO_OPTIONS)
 APP_ARGS                := patch 1.0.0
 
 # Environment
