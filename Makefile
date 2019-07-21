@@ -65,7 +65,7 @@ fmt: ## Run fmt
 fmt-check: ## Run fmt
 	$(CARGO_COMMAND) fmt --all -- --check
 
-clippy: ## Run clippy
+clippy: ## xRun clippy
 	$(CARGO_COMMAND) clippy --all-features -- -D warnings
 
 lint: fmt clippy ## Run fmt and clippy
