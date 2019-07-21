@@ -45,7 +45,7 @@ steps:
       cargo install --path .
       rm -rf "$D"
     displayName: Install cross
-  - script: make fmt-check test TARGET=$TARGET
+  - script: make -p --debug fmt-check test TARGET=$TARGET
     displayName: Test
   - script: make release-build TARGET=$TARGET
     displayName: Build
