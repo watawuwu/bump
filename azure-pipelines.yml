@@ -86,12 +86,12 @@ steps:
     tar czf %NAME%-%BUILD_BUILDNUMBER%-%TARGET%.tar.gz -C target/%TARGET%/release %NAME%.exe
   displayName: Build for Windows
   condition: and(eq( variables['Agent.OS'], 'Windows_NT' ), succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
-- task: GithubRelease@0
-  displayName: Create GitHub Release
-  inputs:
-    gitHubConnection: github-watawuwu
-    repositoryName: watawuwu/bump
-    tag: $(Build.BuildNumber)
-    assets: |
-      $(Build.ArtifactStagingDirectory)/*.tar.gz
-  condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
+# - task: GithubRelease@0
+#   displayName: Create GitHub Release
+#   inputs:
+#     gitHubConnection: github-watawuwu
+#     repositoryName: watawuwu/bump
+#     tag: $(Build.BuildNumber)
+#     assets: |
+#       $(Build.ArtifactStagingDirectory)/*.tar.gz
+#   condition: and(succeeded(), startsWith(variables['Build.SourceBranch'], 'refs/tags'))
