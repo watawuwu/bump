@@ -1,3 +1,23 @@
+trigger:
+  branches:
+    include:
+    - '*'
+    exclude:
+    - test/*
+  paths:
+    exclude:
+    - README.md
+    - install.sh
+pr:
+  autoCancel: true
+  branches:
+    include:
+    - '*'
+  paths:
+    exclude:
+    - README.md
+    - install.sh
+
 strategy:
   matrix:
     musl:
