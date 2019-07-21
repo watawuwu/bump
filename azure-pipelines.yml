@@ -2,10 +2,10 @@ strategy:
   matrix:
     musl:
       target: 'x86_64-unknown-linux-musl'
-      imageName: 'ubuntu-18.04'
+      imageName: 'ubuntu-16.04'
     gnu:
       target: 'x86_64-unknown-linux-gnu'
-      imageName: 'ubuntu-18.04'
+      imageName: 'ubuntu-16.04'
     mac:
       target: 'x86_64-apple-darwin'
       imageName: 'macos-10.13'
