@@ -48,7 +48,7 @@ run: lint ## Execute a main.rs
 test: lint ## Run the tests
 	$(CARGO_COMMAND) test $(CARGO_SUB_OPTIONS) -- --nocapture
 
-check: ## Check syntax, but don't build object files
+check: fmt ## Check syntax, but don't build object files
 	$(CARGO_COMMAND) check $(CARGO_SUB_OPTIONS)
 
 build: ## Build all project
