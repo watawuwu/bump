@@ -37,10 +37,9 @@ impl FromStr for Version {
         debug!("prefix: {}", prefix);
         debug!("version: {}", version);
 
-        let ver = SemVer::parse(version)?;
         Ok(Version {
             prefix: prefix.to_string(),
-            ver,
+            ver: SemVer::parse(version)?,
         })
     }
 }
