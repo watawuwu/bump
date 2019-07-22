@@ -5,17 +5,13 @@ mod version;
 
 use crate::args::{Args, Command};
 use crate::error::Result;
+use exitcode;
 use log::*;
 use pretty_env_logger;
 
 use std::env;
 use std::process::exit;
 use structopt::StructOpt;
-
-enum ExitStatus {
-    Success,
-    Failure,
-}
 
 fn run(args: Vec<String>) -> Result<String> {
     let clap = Args::clap().get_matches_from_safe(args.into_iter())?;
@@ -39,14 +35,14 @@ fn main() {
     let code = match run(args) {
         Ok(view) => {
             println!("{}", view);
-            ExitStatus::Success
+            exitcode::OK
         }
         Err(err) => {
             eprintln!("Error: {}", err);
-            ExitStatus::Failure
+            exitcode::USAGE
         }
     };
-    exit(code as i32)
+    exit(code)
 }
 
 #[cfg(test)]
