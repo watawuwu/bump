@@ -11,11 +11,9 @@ use pretty_env_logger;
 
 use std::env;
 use std::process::exit;
-use structopt::StructOpt;
 
-fn run(args: Vec<String>) -> Result<String> {
-    let clap = Args::clap().get_matches_from_safe(args.into_iter())?;
-    let args = Args::from_clap(&clap);
+fn run(row_args: Vec<String>) -> Result<String> {
+    let args = Args::new(&row_args)?;
 
     let version = match &args.cmd {
         Command::Patch { ver } => ver.bump_patch(),
