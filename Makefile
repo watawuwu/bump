@@ -19,6 +19,9 @@ CARGO_BIN               := cross
 ifneq (,$(findstring mingw64, $(OS)))
     CARGO_BIN := cargo
 endif
+ifeq (,$(shell command -v cross 2> /dev/null))
+    CARGO_BIN := cargo
+endif
 CARGO_OPTIONS           :=
 CARGO_SUB_OPTIONS       := --target $(TARGET)
 CARGO_COMMAND           := $(CARGO_BIN) +$(TOOLCHAIN) $(CARGO_OPTIONS)
