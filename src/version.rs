@@ -5,7 +5,7 @@ use std::str::FromStr;
 
 const SHORTHAND_VERSION_PREFIX: &str = "v";
 
-#[derive(PartialEq, Debug)]
+#[derive(PartialEq, Debug, Clone)]
 pub struct Version {
     has_prefix: bool,
     ver: SemVer,
@@ -21,10 +21,7 @@ impl FromStr for Version {
         };
 
         let ver = SemVer::parse(version)?;
-        Ok(Version {
-            has_prefix: prefix,
-            ver,
-        })
+        Ok(Version { prefix, ver })
     }
 }
 
@@ -41,47 +38,32 @@ impl fmt::Display for Version {
 
 impl Version {
     pub fn bump_patch(&self) -> Version {
-        let mut ver = self.ver.clone();
-        ver.increment_patch();
-        Version {
-            has_prefix: self.has_prefix,
-            ver,
-        }
+        let mut v = self.clone();
+        v.ver.increment_patch();
+        v
     }
 
     pub fn bump_minor(&self) -> Version {
-        let mut ver = self.ver.clone();
-        ver.increment_minor();
-        Version {
-            has_prefix: self.has_prefix,
-            ver,
-        }
+        let mut v = self.clone();
+        v.ver.increment_minor();
+        v
     }
 
     pub fn bump_major(&self) -> Version {
-        let mut ver = self.ver.clone();
-        ver.increment_major();
-        Version {
-            has_prefix: self.has_prefix,
-            ver,
-        }
+        let mut v = self.clone();
+        v.ver.increment_major();
+        v
     }
 
     pub fn update_pre_release(&self, pre: impl Into<String>) -> Version {
-        let mut ver = self.ver.clone();
-        ver.pre = vec![Identifier::AlphaNumeric(pre.into())];
-        Version {
-            has_prefix: self.has_prefix,
-            ver,
-        }
+        let mut v = self.clone();
+        v.ver.pre = vec![Identifier::AlphaNumeric(pre.into())];
+        v
     }
 
     pub fn update_build(&self, build: impl Into<String>) -> Version {
-        let mut ver = self.ver.clone();
-        ver.build = vec![Identifier::AlphaNumeric(build.into())];
-        Version {
-            has_prefix: self.has_prefix,
-            ver,
-        }
+        let mut v = self.clone();
+        v.ver.build = vec![Identifier::AlphaNumeric(build.into())];
+        v
     }
 }
