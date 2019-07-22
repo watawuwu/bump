@@ -60,6 +60,13 @@ mod tests {
         assert_eq!(actual.unwrap(), String::from(expect));
     }
 
+    fn test_fail(row_args: Vec<&str>) {
+        let args = row_args.into_iter().map(String::from).collect();
+
+        let actual = run(args);
+        assert!(actual.is_err());
+    }
+
     #[test]
     fn inc_patch() {
         let version = "0.1.0";
@@ -183,4 +190,24 @@ mod tests {
         let args = vec!["bump", "build", "20190723", version];
         test_success(args, expect);
     }
+
+    #[test]
+    fn invalid_version() {
+        let version = "0.0";
+        let args = vec!["bump", "patch", version];
+        test_fail(args);
+
+        let version = "release";
+        let args = vec!["bump", "patch", version];
+        test_fail(args);
+
+        let version = "0-0-0";
+        let args = vec!["bump", "patch", version];
+        test_fail(args);
+
+        let version = "0.0.0@20190722";
+        let args = vec!["bump", "patch", version];
+        test_fail(args);
+    }
+
 }

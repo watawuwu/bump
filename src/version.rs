@@ -1,4 +1,5 @@
 use crate::error::AppError;
+use failure::*;
 use lazy_static::lazy_static;
 use log::*;
 use regex::Regex;
@@ -20,16 +21,27 @@ pub struct Version {
 impl FromStr for Version {
     type Err = AppError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        // @todo
-        let caps = PREFIX.captures(s).unwrap();
-        let prefix = caps.name("prefix").unwrap().as_str().to_string();
-        let version = caps.name("version").unwrap().as_str();
+        let caps = PREFIX
+            .captures(s)
+            .ok_or_else(|| format_err!("Can't find semver format. value: {}", s))?;
 
-        debug!("prefix: {}", &prefix);
+        let cap_pre = caps.name("prefix");
+        let cap_ver = caps.name("version");
+
+        let (prefix, version) = match (cap_pre, cap_ver) {
+            (Some(p), Some(v)) => (p.as_str(), v.as_str()),
+            (None, Some(v)) => ("", v.as_str()),
+            _ => bail!("Can't find semver format. value: {}", s),
+        };
+
+        debug!("prefix: {}", prefix);
         debug!("version: {}", version);
 
         let ver = SemVer::parse(version)?;
-        Ok(Version { prefix, ver })
+        Ok(Version {
+            prefix: prefix.to_string(),
+            ver,
+        })
     }
 }
 
