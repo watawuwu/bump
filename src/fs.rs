@@ -3,6 +3,7 @@ use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::Path;
 
 use crate::error::Result;
+use std::io;
 
 #[allow(dead_code)]
 pub fn mk_dir(path: impl AsRef<Path>) -> Result<()> {
@@ -25,6 +26,15 @@ pub fn write_file(path: impl AsRef<Path>, contents: &[u8]) -> Result<()> {
     let mut buf = BufWriter::new(file);
     buf.write_all(contents)?;
     Ok(())
+}
+
+pub fn read_from_stdin() -> Result<String> {
+    let mut buf = String::new();
+    let stdin = io::stdin();
+    let mut handle = stdin.lock();
+    handle.read_to_string(&mut buf)?;
+
+    Ok(buf)
 }
 
 #[cfg(test)]
