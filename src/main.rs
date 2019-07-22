@@ -53,7 +53,7 @@ fn main() {
 mod tests {
     use super::*;
 
-    fn test_run(row_args: Vec<&str>, expect: &str) {
+    fn test_success(row_args: Vec<&str>, expect: &str) {
         let args = row_args.into_iter().map(String::from).collect();
 
         let actual = run(args);
@@ -65,7 +65,7 @@ mod tests {
         let version = "0.1.0";
         let expect = "0.1.1";
         let args = vec!["bump", "patch", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -73,7 +73,7 @@ mod tests {
         let version = "0.1.1";
         let expect = "0.2.0";
         let args = vec!["bump", "minor", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -81,7 +81,7 @@ mod tests {
         let version = "0.1.1";
         let expect = "1.0.0";
         let args = vec!["bump", "major", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -89,7 +89,7 @@ mod tests {
         let version = "1.0.0-alpha.0";
         let expect = "1.0.1";
         let args = vec!["bump", "patch", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -98,7 +98,7 @@ mod tests {
         let pre = "alpha.0";
         let expect = "1.0.0-alpha.0";
         let args = vec!["bump", "pre", pre, version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -107,7 +107,7 @@ mod tests {
         let pre = "beta.0";
         let expect = "1.0.0-beta.0";
         let args = vec!["bump", "pre", pre, version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -115,7 +115,7 @@ mod tests {
         let version = "1.0.0+20190722";
         let expect = "1.0.1";
         let args = vec!["bump", "patch", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -124,7 +124,7 @@ mod tests {
         let build = "20190722";
         let expect = "1.0.0+20190722";
         let args = vec!["bump", "build", build, version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -133,7 +133,7 @@ mod tests {
         let build = "20190723";
         let expect = "1.0.0+20190723";
         let args = vec!["bump", "build", build, version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -141,7 +141,7 @@ mod tests {
         let version = "v1.0.0";
         let expect = "v2.0.0";
         let args = vec!["bump", "major", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -149,7 +149,7 @@ mod tests {
         let version = "release-1.0.0";
         let expect = "release-2.0.0";
         let args = vec!["bump", "major", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -157,7 +157,7 @@ mod tests {
         let version = "release-1.0.0";
         let expect = "release-1.1.0";
         let args = vec!["bump", "minor", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -165,7 +165,7 @@ mod tests {
         let version = "release-1.0.0";
         let expect = "release-1.0.1";
         let args = vec!["bump", "patch", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -173,7 +173,7 @@ mod tests {
         let version = "release-1.0.0-alpha.0";
         let expect = "release-1.0.0-beta.0";
         let args = vec!["bump", "pre", "beta.0", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 
     #[test]
@@ -181,6 +181,6 @@ mod tests {
         let version = "release-1.0.0+20190722";
         let expect = "release-1.0.0+20190723";
         let args = vec!["bump", "build", "20190723", version];
-        test_run(args, expect);
+        test_success(args, expect);
     }
 }
