@@ -1,24 +1,32 @@
 use crate::error::AppError;
+use lazy_static::lazy_static;
+use log::*;
+use regex::Regex;
 use semver::{Identifier, Version as SemVer};
 use std::fmt;
 use std::str::FromStr;
 
-const SHORTHAND_VERSION_PREFIX: &str = "v";
+lazy_static! {
+    static ref PREFIX: Regex =
+        Regex::new(r"^(?P<prefix>.*?)(?P<version>[0-9].[0-9].[0-9](?:.*)$)").unwrap();
+}
 
 #[derive(PartialEq, Debug, Clone)]
 pub struct Version {
-    has_prefix: bool,
+    prefix: String,
     ver: SemVer,
 }
 
 impl FromStr for Version {
     type Err = AppError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let (prefix, version) = if s.starts_with(SHORTHAND_VERSION_PREFIX) {
-            (true, s.trim_start_matches(SHORTHAND_VERSION_PREFIX))
-        } else {
-            (false, s)
-        };
+        // @todo
+        let caps = PREFIX.captures(s).unwrap();
+        let prefix = caps.name("prefix").unwrap().as_str().to_string();
+        let version = caps.name("version").unwrap().as_str();
+
+        debug!("prefix: {}", &prefix);
+        debug!("version: {}", version);
 
         let ver = SemVer::parse(version)?;
         Ok(Version { prefix, ver })
@@ -27,12 +35,7 @@ impl FromStr for Version {
 
 impl fmt::Display for Version {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let prefix = if self.has_prefix {
-            SHORTHAND_VERSION_PREFIX
-        } else {
-            ""
-        };
-        write!(f, "{}{}", prefix, self.ver)
+        write!(f, "{}{}", self.prefix, self.ver)
     }
 }
 

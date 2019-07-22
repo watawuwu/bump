@@ -39,11 +39,14 @@ bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 1.0.0+20190720CCDD
 ```
 
-- If semver has the version prefix "v", bump ignore the prefix.
+- If semver has the version prefix char, bump ignore the prefix.
 
 ```
 ❯❯ bump patch v1.0.0
 v1.0.1
+
+❯❯ bump patch release-1.0.1
+release-1.0.1
 ```
 
 - Other usage
