@@ -9,7 +9,7 @@ use std::str::FromStr;
 
 lazy_static! {
     static ref PREFIX: Regex =
-        Regex::new(r"^(?P<prefix>.*?)(?P<version>[0-9].[0-9].[0-9](?:.*)$)").unwrap();
+        Regex::new(r"^(?P<prefix>.*?)(?P<version>[0-9]+?.[0-9]+?.[0-9]+?(?:.*)$)").unwrap();
 }
 
 #[derive(PartialEq, Debug, Clone)]

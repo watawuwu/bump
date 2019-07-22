@@ -69,6 +69,16 @@ mod tests {
         let expect = "0.1.1";
         let args = vec!["bump", "patch", version];
         test_success(args, expect);
+
+        let version = "0.10.0";
+        let expect = "0.10.1";
+        let args = vec!["bump", "patch", version];
+        test_success(args, expect);
+
+        let version = "10000.10000.10000";
+        let expect = "10000.10000.10001";
+        let args = vec!["bump", "patch", version];
+        test_success(args, expect);
     }
 
     #[test]
@@ -77,12 +87,32 @@ mod tests {
         let expect = "0.2.0";
         let args = vec!["bump", "minor", version];
         test_success(args, expect);
+
+        let version = "0.10.0";
+        let expect = "0.11.0";
+        let args = vec!["bump", "minor", version];
+        test_success(args, expect);
+
+        let version = "10000.10000.10000";
+        let expect = "10000.10001.0";
+        let args = vec!["bump", "minor", version];
+        test_success(args, expect);
     }
 
     #[test]
     fn inc_major() {
         let version = "0.1.1";
         let expect = "1.0.0";
+        let args = vec!["bump", "major", version];
+        test_success(args, expect);
+
+        let version = "0.10.0";
+        let expect = "1.0.0";
+        let args = vec!["bump", "major", version];
+        test_success(args, expect);
+
+        let version = "10000.10000.10000";
+        let expect = "10001.0.0";
         let args = vec!["bump", "major", version];
         test_success(args, expect);
     }
