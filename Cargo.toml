@@ -6,8 +6,10 @@ exclude     = ["examples/*", "tests/*", "benches/*", "*.png", "perf/*", "assets"
 readme      = "README.md"
 edition     = "2018"
 license     = "MIT/Apache-2.0"
-description = ""
+description = "Increments version with semver specification"
 repository  = "https://github.com/watawuwu/bump"
+keywords    = ["semver", "cli", "version", "bump"]
+categories  = ["command-line-utilities", "text-processing"]
 
 [[bin]]
 name = "bump"
