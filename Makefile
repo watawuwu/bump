@@ -80,6 +80,12 @@ lint: fmt clippy ## Run fmt and clippy
 release-build: ## Build all project
 	$(MAKE) build CARGO_SUB_OPTIONS="$(CARGO_SUB_OPTIONS) --release"
 
+publish:
+ifeq ($(LEVEL),)
+	$(error LEVEL not set correctly.)
+endif
+	echo cargo release $(LEVEL) --no-dev-version --tag-name "{{version}}"
+
 help: ## Print help
 	echo -e "Usage: make [task]\n\nTasks:"
 	perl -nle 'printf("    \033[33m%s%-20s\033[0m %s\n",$$1,$$2,$$3) if /^([a-zA-Z]){1}([a-zA-Z_-]*?):(?:.+?## )?(.*?)$$/' $(MAKEFILE_LIST)
