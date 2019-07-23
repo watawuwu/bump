@@ -3,7 +3,7 @@ mod error;
 mod fs;
 mod version;
 
-use crate::args::{Args, Command};
+use crate::args::Command;
 use crate::error::Result;
 use exitcode;
 use log::*;
@@ -13,9 +13,9 @@ use std::env;
 use std::process::exit;
 
 fn run(row_args: Vec<String>) -> Result<String> {
-    let args = Args::new(&row_args)?;
+    let command = Command::new(&row_args)?;
 
-    let version = match &args.cmd {
+    let version = match command {
         Command::Patch { ver } => ver.bump_patch(),
         Command::Minor { ver } => ver.bump_minor(),
         Command::Major { ver } => ver.bump_major(),
@@ -46,6 +46,8 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::fs::*;
+    use tempdir::TempDir;
 
     fn test_success(row_args: Vec<&str>, expect: &str) {
         let args = row_args.into_iter().map(String::from).collect();
@@ -222,4 +224,24 @@ mod tests {
         test_fail(args);
     }
 
+    #[test]
+    fn file_ok() {
+        let version = "0.0.0";
+
+        let tmp_dir = TempDir::new("").unwrap();
+        let version_file = tmp_dir.path().join("version.txt");
+        let _ = write_file(&version_file, version.as_bytes()).unwrap();
+
+        let expect = "0.0.1";
+        let args = vec!["bump", "patch", "-f", version_file.to_str().unwrap()];
+        test_success(args, expect);
+
+        let expect = "0.1.0";
+        let args = vec!["bump", "minor", "-f", version_file.to_str().unwrap()];
+        test_success(args, expect);
+
+        let expect = "1.0.0";
+        let args = vec!["bump", "major", "-f", version_file.to_str().unwrap()];
+        test_success(args, expect);
+    }
 }
