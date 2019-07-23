@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# todo more simple
+# ref https://github.com/rust-lang/rustup.rs/blob/master/rustup-init.sh
+
 set -u
 
 ORG="watawuwu"
@@ -58,6 +61,9 @@ main() {
                 ;;
         esac
     done
+    _bin_dir="${prefix}/bin"
+    _bin_file="${_bin_dir}/${NAME}"
+
 
     printf '%s\n' 'info: downloading binary' 1>&2
 
@@ -72,16 +78,19 @@ main() {
 
     local _url="${BIN_URL}/${_tag}/${NAME}-${_tag}-${_arch}.tar.gz"
 
-    local _install_bin="${prefix}/bin/bump"
-    ensure downloader "$_url" "$_install_bin"
-    ensure chmod u+x "$_install_bin"
-    if [ ! -x "$_install_bin" ]; then
+    local _gzip_bin_file="${_dir}/${NAME}.tar.gz"
+    ensure downloader "$_url" "$_gzip_bin_file"
+    ensure tar -xz -f "$_gzip_bin_file" -C "$_bin_dir"
+
+    ensure chmod u+x "$_bin_file"
+    if [[ ! -x "$_bin_file" ]]; then
         printf '%s\n' "Cannot execute $_file (likely because of mounting /tmp as noexec)." 1>&2
         printf '%s\n' "Please copy the file to a location where you can execute binaries and run ./rustup-init${_ext}." 1>&2
         exit 1
     fi
 
-    ignore rm "${_tag_file}"
+    ignore rm "$_tag_file"
+    ignore rm "$_gzip_bin_file"
     ignore rmdir "$_dir"
 }
 
@@ -101,9 +110,9 @@ get_bitness() {
     # escape sequences, so we use those.
     local _current_exe_head
     _current_exe_head=$(head -c 5 /proc/self/exe )
-    if [ "$_current_exe_head" = "$(printf '\177ELF\001')" ]; then
+    if [[ "$_current_exe_head" = "$(printf '\177ELF\001')" ]]; then
         echo 32
-    elif [ "$_current_exe_head" = "$(printf '\177ELF\002')" ]; then
+    elif [[ "$_current_exe_head" = "$(printf '\177ELF\002')" ]]; then
         echo 64
     else
         err "unknown platform bitness"
@@ -121,9 +130,9 @@ get_endianness() {
 
     local _current_exe_endianness
     _current_exe_endianness="$(head -c 6 /proc/self/exe | tail -c 1)"
-    if [ "$_current_exe_endianness" = "$(printf '\001')" ]; then
+    if [[ "$_current_exe_endianness" = "$(printf '\001')" ]]; then
         echo "${cputype}${suffix_el}"
-    elif [ "$_current_exe_endianness" = "$(printf '\002')" ]; then
+    elif [[ "$_current_exe_endianness" = "$(printf '\002')" ]]; then
         echo "${cputype}${suffix_eb}"
     else
         err "unknown platform endianness"
@@ -135,13 +144,13 @@ get_architecture() {
     _ostype="$(uname -s)"
     _cputype="$(uname -m)"
 
-    if [ "$_ostype" = Linux ]; then
+    if [[ "$_ostype" = Linux ]]; then
         if [ "$(uname -o)" = Android ]; then
             _ostype=Android
         fi
     fi
 
-    if [ "$_ostype" = Darwin ] && [ "$_cputype" = i386 ]; then
+    if [[ "$_ostype" = Darwin ]] && [[ "$_cputype" = i386 ]]; then
         # Darwin `uname -m` lies
         if sysctl hw.optional.x86_64 | grep -q ': 1'; then
             _cputype=x86_64
@@ -193,14 +202,14 @@ get_architecture() {
 
         xscale | arm)
             _cputype=arm
-            if [ "$_ostype" = "linux-android" ]; then
+            if [[ "$_ostype" = "linux-android" ]]; then
                 _ostype=linux-androideabi
             fi
             ;;
 
         armv6l)
             _cputype=arm
-            if [ "$_ostype" = "linux-android" ]; then
+            if [[ "$_ostype" = "linux-android" ]]; then
                 _ostype=linux-androideabi
             else
                 _ostype="${_ostype}eabihf"
@@ -209,7 +218,7 @@ get_architecture() {
 
         armv7l | armv8l)
             _cputype=armv7
-            if [ "$_ostype" = "linux-android" ]; then
+            if [[ "$_ostype" = "linux-android" ]]; then
                 _ostype=linux-androideabi
             else
                 _ostype="${_ostype}eabihf"
@@ -229,7 +238,7 @@ get_architecture() {
             ;;
 
         mips64)
-            if [ "$_bitness" -eq 64 ]; then
+            if [[ "$_bitness" -eq 64 ]]; then
                 # only n64 ABI is supported for now
                 _ostype="${_ostype}abi64"
                 _cputype=$(get_endianness mips64 '' el)
@@ -258,7 +267,7 @@ get_architecture() {
     esac
 
     # Detect 64-bit linux with 32-bit userland
-    if [ "${_ostype}" = unknown-linux-gnu ] && [ "${_bitness}" -eq 32 ]; then
+    if [[ "${_ostype}" = unknown-linux-gnu ]] && [[ "${_bitness}" -eq 32 ]]; then
         case $_cputype in
             x86_64)
                 _cputype=i686
@@ -275,7 +284,7 @@ get_architecture() {
     # Detect armv7 but without the CPU features Rust needs in that build,
     # and fall back to arm.
     # See https://github.com/rust-lang/rustup.rs/issues/587.
-    if [ "$_ostype" = "unknown-linux-gnueabihf" ] && [ "$_cputype" = armv7 ]; then
+    if [[ "$_ostype" = "unknown-linux-gnueabihf" ]] && [[ "$_cputype" = armv7 ]]; then
         if ensure grep '^Features' /proc/cpuinfo | grep -q -v neon; then
             # At least one processor does not have NEON.
             _cputype=arm
@@ -307,7 +316,7 @@ check_cmd() {
 }
 
 assert_nz() {
-    if [ -z "$1" ]; then err "assert_nz $2"; fi
+    if [[ -z "$1" ]]; then err "assert_nz $2"; fi
 }
 
 # Run a command that should never fail. If the command fails execution
@@ -336,16 +345,16 @@ downloader() {
         _dld='curl or wget' # to be used in error message of need_cmd
     fi
 
-    if [ "$1" = --check ]; then
+    if [[ "$1" = --check ]]; then
         need_cmd "$_dld"
-    elif [ "$_dld" = curl ]; then
+    elif [[ "$_dld" = curl ]]; then
         if ! check_help_for curl --proto --tlsv1.2; then
             echo "Warning: Not forcing TLS v1.2, this is potentially less secure"
             curl --silent --show-error --fail --location "$1" --output "$2"
         else
             curl --proto '=https' --tlsv1.2 --silent --show-error --fail --location "$1" --output "$2"
         fi
-    elif [ "$_dld" = wget ]; then
+    elif [[ "$_dld" = wget ]]; then
         if ! check_help_for wget --https-only --secure-protocol; then
             echo "Warning: Not forcing TLS v1.2, this is potentially less secure"
             wget "$1" -O "$2"
@@ -368,7 +377,7 @@ check_help_for() {
     # If we're running on OS-X, older than 10.13, then we always
     # fail to find these options to force fallback
     if check_cmd sw_vers; then
-        if [ "$(sw_vers -productVersion | cut -d. -f2)" -lt 13 ]; then
+        if [[ "$(sw_vers -productVersion | cut -d. -f2)" -lt 13 ]]; then
             # Older than 10.13
             echo "Warning: Detected OS X platform older than 10.13"
             _ok="n"
