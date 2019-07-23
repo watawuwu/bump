@@ -62,7 +62,7 @@ mod tests {
     }
 
     #[test]
-    fn inc_patch() {
+    fn inc_patch_ok() {
         let version = "0.1.0";
         let expect = "0.1.1";
         let args = vec!["bump", "patch", version];
@@ -80,7 +80,7 @@ mod tests {
     }
 
     #[test]
-    fn inc_minor() {
+    fn inc_minor_ok() {
         let version = "0.1.1";
         let expect = "0.2.0";
         let args = vec!["bump", "minor", version];
@@ -98,7 +98,7 @@ mod tests {
     }
 
     #[test]
-    fn inc_major() {
+    fn inc_major_ok() {
         let version = "0.1.1";
         let expect = "1.0.0";
         let args = vec!["bump", "major", version];
@@ -116,7 +116,7 @@ mod tests {
     }
 
     #[test]
-    fn remove_pre() {
+    fn remove_pre_ok() {
         let version = "1.0.0-alpha.0";
         let expect = "1.0.1";
         let args = vec!["bump", "patch", version];
@@ -124,7 +124,7 @@ mod tests {
     }
 
     #[test]
-    fn add_pre() {
+    fn add_pre_ok() {
         let version = "1.0.0";
         let pre = "alpha.0";
         let expect = "1.0.0-alpha.0";
@@ -133,7 +133,7 @@ mod tests {
     }
 
     #[test]
-    fn replace_pre() {
+    fn replace_pre_ok() {
         let version = "1.0.0-alpha.0";
         let pre = "beta.0";
         let expect = "1.0.0-beta.0";
@@ -142,7 +142,7 @@ mod tests {
     }
 
     #[test]
-    fn remove_build() {
+    fn remove_build_ok() {
         let version = "1.0.0+20190722";
         let expect = "1.0.1";
         let args = vec!["bump", "patch", version];
@@ -159,7 +159,7 @@ mod tests {
     }
 
     #[test]
-    fn replace_build() {
+    fn replace_build_ok() {
         let version = "1.0.0+20190722";
         let build = "20190723";
         let expect = "1.0.0+20190723";
@@ -168,7 +168,7 @@ mod tests {
     }
 
     #[test]
-    fn ignore_default_prefix() {
+    fn ignore_default_prefix_ok() {
         let version = "v1.0.0";
         let expect = "v2.0.0";
         let args = vec!["bump", "major", version];
@@ -176,39 +176,27 @@ mod tests {
     }
 
     #[test]
-    fn prefix_major() {
+    fn prefix_ok() {
         let version = "release-1.0.0";
         let expect = "release-2.0.0";
         let args = vec!["bump", "major", version];
         test_success(args, expect);
-    }
 
-    #[test]
-    fn prefix_minor() {
         let version = "release-1.0.0";
         let expect = "release-1.1.0";
         let args = vec!["bump", "minor", version];
         test_success(args, expect);
-    }
 
-    #[test]
-    fn prefix_patch() {
         let version = "release-1.0.0";
         let expect = "release-1.0.1";
         let args = vec!["bump", "patch", version];
         test_success(args, expect);
-    }
 
-    #[test]
-    fn prefix_pre() {
         let version = "release-1.0.0-alpha.0";
         let expect = "release-1.0.0-beta.0";
         let args = vec!["bump", "pre", "beta.0", version];
         test_success(args, expect);
-    }
 
-    #[test]
-    fn prefix_build() {
         let version = "release-1.0.0+20190722";
         let expect = "release-1.0.0+20190723";
         let args = vec!["bump", "build", "20190723", version];
@@ -216,7 +204,7 @@ mod tests {
     }
 
     #[test]
-    fn invalid_version() {
+    fn version_invalid() {
         let version = "0.0";
         let args = vec!["bump", "patch", version];
         test_fail(args);
