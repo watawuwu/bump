@@ -11,13 +11,13 @@ use structopt::StructOpt;
 
 #[derive(StructOpt, PartialEq, Debug)]
 #[structopt(name = "bump")]
-pub struct Args {
+struct RawArgs {
     #[structopt(subcommand)]
-    cmd: RowCommand,
+    sub: RawSubCommand,
 }
 
 #[derive(StructOpt, PartialEq, Debug)]
-enum RowCommand {
+enum RawSubCommand {
     /// Increment patch version
     #[structopt(name = "patch")]
     Patch {
@@ -74,7 +74,31 @@ enum RowCommand {
     },
 }
 
-pub enum Command {
+pub struct Args {
+    pub sub: SubCommand,
+}
+
+impl Args {
+    pub fn new(row_args: &[String]) -> Result<Args> {
+        let mut app = RawArgs::clap();
+        let mut buf: Vec<u8> = Vec::new();
+        app.write_long_help(&mut buf)?;
+
+        let clap = app.get_matches_from_safe(row_args)?;
+        let args = RawArgs::from_clap(&clap);
+        let sub = match args.sub.try_into() {
+            Ok(s) => s,
+            Err(e) => {
+                bail!("{}\n{}", e, String::from_utf8(buf)?);
+            }
+        };
+        let cmd = Args { sub };
+
+        Ok(cmd)
+    }
+}
+
+pub enum SubCommand {
     Patch { ver: Version },
     Minor { ver: Version },
     Major { ver: Version },
@@ -82,16 +106,7 @@ pub enum Command {
     Build { build: String, ver: Version },
 }
 
-impl Command {
-    pub fn new(row_args: &[String]) -> Result<Command> {
-        let clap = Args::clap().get_matches_from_safe(row_args)?;
-        let args = Args::from_clap(&clap);
-        let cmd = args.try_into()?;
-        Ok(cmd)
-    }
-}
-
-impl Command {
+impl SubCommand {
     fn version(file: Option<String>, ver: Option<String>) -> Result<Version> {
         let v = match (file, ver) {
             (None, Some(ref ver)) if ver == "-" => {
@@ -113,39 +128,36 @@ impl Command {
                 let buf = String::from_utf8(read_file(f)?)?;
                 Version::from_str(buf.trim_end())?
             }
-            _ => {
-                // todo command help message
-                bail!("Invalid argument")
-            }
+            _ => bail!("Invalid argument"),
         };
         Ok(v)
     }
 }
 
-impl TryFrom<Args> for Command {
+impl TryFrom<RawSubCommand> for SubCommand {
     type Error = AppError;
 
-    fn try_from(args: Args) -> result::Result<Self, Self::Error> {
-        let cmd = match args.cmd {
-            RowCommand::Patch { file, ver } => Command::Patch {
+    fn try_from(raw_sub: RawSubCommand) -> result::Result<Self, Self::Error> {
+        let sub = match raw_sub {
+            RawSubCommand::Patch { file, ver } => SubCommand::Patch {
                 ver: Self::version(file, ver)?,
             },
-            RowCommand::Minor { file, ver } => Command::Minor {
+            RawSubCommand::Minor { file, ver } => SubCommand::Minor {
                 ver: Self::version(file, ver)?,
             },
-            RowCommand::Major { file, ver } => Command::Major {
+            RawSubCommand::Major { file, ver } => SubCommand::Major {
                 ver: Self::version(file, ver)?,
             },
-            RowCommand::Pre { file, pre, ver } => Command::Pre {
+            RawSubCommand::Pre { file, pre, ver } => SubCommand::Pre {
                 pre,
                 ver: Self::version(file, ver)?,
             },
-            RowCommand::Build { file, build, ver } => Command::Build {
+            RawSubCommand::Build { file, build, ver } => SubCommand::Build {
                 build,
                 ver: Self::version(file, ver)?,
             },
         };
 
-        Ok(cmd)
+        Ok(sub)
     }
 }

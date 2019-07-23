@@ -3,7 +3,7 @@ mod error;
 mod fs;
 mod version;
 
-use crate::args::Command;
+use crate::args::{Args, SubCommand};
 use crate::error::Result;
 use exitcode;
 use log::*;
@@ -13,14 +13,14 @@ use std::env;
 use std::process::exit;
 
 fn run(row_args: Vec<String>) -> Result<String> {
-    let command = Command::new(&row_args)?;
+    let args = Args::new(&row_args)?;
 
-    let version = match command {
-        Command::Patch { ver } => ver.bump_patch(),
-        Command::Minor { ver } => ver.bump_minor(),
-        Command::Major { ver } => ver.bump_major(),
-        Command::Pre { pre, ver } => ver.update_pre_release(pre),
-        Command::Build { build, ver } => ver.update_build(build),
+    let version = match args.sub {
+        SubCommand::Patch { ver } => ver.bump_patch(),
+        SubCommand::Minor { ver } => ver.bump_minor(),
+        SubCommand::Major { ver } => ver.bump_major(),
+        SubCommand::Pre { pre, ver } => ver.update_pre_release(pre),
+        SubCommand::Build { build, ver } => ver.update_build(build),
     };
 
     debug!("version: {:?}", &version);
@@ -29,6 +29,7 @@ fn run(row_args: Vec<String>) -> Result<String> {
 
 fn main() {
     pretty_env_logger::init();
+
     let args = env::args().collect::<Vec<String>>();
     let code = match run(args) {
         Ok(view) => {
@@ -36,7 +37,7 @@ fn main() {
             exitcode::OK
         }
         Err(err) => {
-            eprintln!("Error: {}", err);
+            eprintln!("{}", err);
             exitcode::USAGE
         }
     };
