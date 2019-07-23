@@ -93,7 +93,7 @@ SUBCOMMANDS:
 ❯❯ curl --tlsv1.2 -sSf https://raw.githubusercontent.com/watawuwu/bump/master/install.sh | sh
 ```
 
-- Install with cargo
+- Compile and install
 
 ```
 ❯❯ git clone https://github.com/watawuwu/bump.git && cd bump
@@ -101,6 +101,11 @@ SUBCOMMANDS:
 ❯❯ make install
 ```
 
+- Install with cargo
+
+```
+❯❯ cargo install bump-bin
+```
 
 ## Contributing
 
