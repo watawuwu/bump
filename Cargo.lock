@@ -57,7 +57,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "bump-bin"
-version = "0.3.0"
+version = "0.3.1"
 dependencies = [
  "atty 0.2.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "exitcode 1.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
