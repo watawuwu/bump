@@ -29,7 +29,7 @@ bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 
 ```
 ❯❯ bump pre beta.0 1.0.0-alpha.0
-2.0.0-beta.0
+1.0.0-beta.0
 ```
 
 - Replace build release version
