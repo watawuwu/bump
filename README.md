@@ -49,6 +49,21 @@ v1.0.1
 release-1.0.1
 ```
 
+- Can specify file
+
+```
+❯❯ echo 1.0.0 > version.txt
+❯❯ bump patch -f version.txt
+1.0.1
+```
+
+- Can read from pipeline
+
+```
+❯❯ echo 1.0.0 | bump patch
+1.0.1
+```
+
 - Other usage
 
 ```
