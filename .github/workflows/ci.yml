@@ -1,3 +1,5 @@
+name: Rust
+
 on: [push, pull_requests]
 
 jobs:
