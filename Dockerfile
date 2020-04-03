@@ -20,5 +20,4 @@ RUN apk upgrade --update-cache --available && \
 
 COPY --from=builder /home/rust/work/target/x86_64-unknown-linux-musl/release/bump /bin/bump
 
-CMD ["/bin/bump"]
-
+ENTRYPOINT ["/bin/bump"]
