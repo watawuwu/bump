@@ -2,7 +2,7 @@
 
 bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 
-[![Azure devops](https://img.shields.io/azure-devops/build/sabi-dev/bump/2.svg)](https://dev.azure.com/sabi-dev/bump/_build?definitionId=2)
+![Test](https://github.com/watawuwu/bump/workflows/Test/badge.svg?branch=master)
 [![Latest version](https://img.shields.io/crates/v/bump-bin.svg)](https://crates.io/crates/bump-bin)
 [![Documentation](https://docs.rs/bump-bin/badge.svg)](https://docs.rs/crate/bump-bin)
 [![Docker](https://img.shields.io/docker/build/watawuwu/bump.svg)](https://cloud.docker.com/repository/docker/watawuwu/bump/)
