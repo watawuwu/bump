@@ -52,3 +52,15 @@ jobs:
       with:
         command: test
         args: --target=${{ matrix.target }}
+
+    - name: Check format
+      uses: actions-rs/cargo@v1
+      with:
+        command: fmt
+        args: --all -- --check
+
+    - name: Lint code
+      uses: actions-rs/cargo@v1
+      with:
+        command: clippy
+        args: --all-features -- -D warnings
