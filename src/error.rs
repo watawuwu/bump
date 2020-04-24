@@ -1,4 +1,3 @@
-use failure;
 use std::result;
 
 pub type AppError = failure::Error;

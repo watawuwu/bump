@@ -5,9 +5,7 @@ mod version;
 
 use crate::args::{Args, SubCommand};
 use crate::error::Result;
-use exitcode;
 use log::*;
-use pretty_env_logger;
 
 use std::env;
 use std::process::exit;

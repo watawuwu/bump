@@ -3,7 +3,7 @@ use exitcode;
 use predicates::prelude::*;
 use std::process::Command;
 
-type Result<T> = std::result::Result<T, Box<std::error::Error>>;
+type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[test]
 fn help_err() -> Result<()> {
