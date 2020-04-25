@@ -1,6 +1,6 @@
 [package]
 name        = "bump-bin"
-version     = "0.3.1"
+version     = "0.3.2"
 authors     = ["Wataru Matsui <watawuwu@3bi.tech>"]
 exclude     = ["examples/*", "tests/*", "benches/*", "*.png", "perf/*", "assets", "Makefile", "tmp.rs"]
 readme      = "README.md"
