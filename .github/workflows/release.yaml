@@ -13,6 +13,7 @@ jobs:
     name: Create Github Release
     runs-on: ubuntu-latest
 
+    steps:
     - name: Install changelog
       uses: actions-rs/install@v0.1
       with:
