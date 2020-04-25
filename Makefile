@@ -55,7 +55,7 @@ build: ## Build all project
 	$(CARGO_COMMAND) build $(CARGO_SUB_OPTIONS)
 
 check-lib: ## Check module version
-	$(CARGO_COMMAND) outdated
+	$(CARGO_COMMAND) outdated -R
 
 update: ## Update modules
 	$(CARGO_COMMAND) update
