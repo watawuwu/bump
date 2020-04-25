@@ -74,6 +74,7 @@ fmt-check: ## Run fmt
 
 clippy: ## Run clippy
 	$(CARGO_COMMAND) clippy --all-features -- -D warnings
+	$(CARGO_COMMAND) clippy --tests
 
 lint: fmt clippy ## Run fmt and clippy
 

@@ -1,5 +1,4 @@
 use assert_cmd::Command;
-use exitcode;
 use predicates::prelude::*;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;

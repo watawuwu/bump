@@ -229,7 +229,7 @@ mod tests {
 
         let tmp_dir = TempDir::new("").unwrap();
         let version_file = tmp_dir.path().join("version.txt");
-        let _ = write_file(&version_file, version.as_bytes()).unwrap();
+        write_file(&version_file, version.as_bytes()).unwrap();
 
         let expect = "0.0.1";
         let args = vec!["bump", "patch", "-f", version_file.to_str().unwrap()];
