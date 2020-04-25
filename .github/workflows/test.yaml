@@ -34,6 +34,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Install musl tools
+      if: matrix.target == 'x86_64-unknown-linux-musl'
+      run: |
+        sudo apt install -y musl-tools --no-install-recommends
+
     # https://github.com/actions/cache/blob/master/examples.md#rust---cargo
     - name: Cache cargo registry
       uses: actions/cache@v1
