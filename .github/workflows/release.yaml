@@ -9,7 +9,49 @@ env:
   NAME: bump
 
 jobs:
-  build:
+  release:
+    name: Create Github Release
+    runs-on: ubuntu-latest
+
+    - name: Install changelog
+      uses: actions-rs/install@v0.1
+      with:
+        crate: changelog
+        version: latest
+
+    - name: Create meta
+      id: create_meta
+      run: |
+        version=${GITHUB_REF/refs\/tags\//}
+        echo "::set-output name=version::${version}"
+
+        changelog="$(changelog)"
+        changelog="${changelog//$'\n'/'%0A'}"
+        echo "::set-output name=changelog::${changelog}"
+
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.create_meta.outputs.version }}
+        release_name: ${{ steps.create_meta.outputs.version }}
+        draft: false
+        prerelease: false
+        body: ${{ steps.create_meta.outputs.changelog }}
+
+    - name: Output Release URL File
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+
+    - name: Save Release URL File for publish
+      uses: actions/upload-artifact@v1
+      with:
+        name: release
+        path: release_url.txt
+
+  publish:
+    needs: [release]
     strategy:
       matrix:
         target:
@@ -32,15 +74,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Get tag name
-      id: tag
+    - name: Create meta
+      id: create_meta
       run: |
-        echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
+        version=${GITHUB_REF/refs\/tags\//}
+        echo "::set-output name=version::${version}"
 
     - name: Install musl tools
       if: matrix.target == 'x86_64-unknown-linux-musl'
       run: |
-        sudo apt install -y musl-tools --no-install-recommends
+        sudo apt install -qq -y musl-tools --no-install-recommends
 
     - uses: actions-rs/toolchain@v1
       with:
@@ -49,12 +92,6 @@ jobs:
         target: ${{ matrix.target }}
         override: true
 
-    - name: Install changelog
-      uses: actions-rs/install@v0.1
-      with:
-        crate: changelog
-        version: latest
-
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -62,28 +99,26 @@ jobs:
         args: --release --target=${{ matrix.target }}
 
     - name: Create artifact
-      id: create-artifact
+      id: create_artifact
       run: |
-        tar -acvf ${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
-        echo "::set-output name=changelog::$(changelog)"
+        tar -acvf ${{ env.NAME }}-${{ steps.create_meta.outputs.version }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
 
-    - name: Create Release
-      id: create-release
-      uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Load Release URL File
+      uses: actions/download-artifact@v1
       with:
-        tag_name: ${{ steps.tag.outputs.version }}
-        release_name: ${{ steps.tag.outputs.version }}
-        draft: false
-        prerelease: false
-        body: ${{ steps.create-artifact.outputs.changelog }}
+        name: release
+
+    - name: Get Release File Name & Upload URL
+      id: get_release_info
+      run: |
+        upload_url=$(cat release/release_url.txt)
+        echo "::set-output name=upload_url::$upload_url"
 
     - uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: ./${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz
-        asset_name: ${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz
+        upload_url: ${{ steps.get_release_info.outputs.upload_url }}
+        asset_path: ./${{ env.NAME }}-${{ steps.create_meta.outputs.version }}-${{ matrix.target }}.tar.gz
+        asset_name: ${{ env.NAME }}-${{ steps.create_meta.outputs.version }}-${{ matrix.target }}.tar.gz
         asset_content_type: application/gzip
