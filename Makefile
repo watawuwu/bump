@@ -84,7 +84,7 @@ publish:
 ifeq ($(LEVEL),)
 	$(error LEVEL not set correctly.)
 endif
-	echo cargo release $(LEVEL) --no-dev-version --tag-name "{{version}}"
+	cargo release $(LEVEL) --no-dev-version --tag-name "{{version}}"
 
 help: ## Print help
 	echo -e "Usage: make [task]\n\nTasks:"
