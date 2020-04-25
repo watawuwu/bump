@@ -2,14 +2,14 @@ name: Test
 
 on:
   push:
-    paths-ignore:
-    - '*.md'
-    - '*.sh'
-    - 'Dockerfile'
-    - 'Makefile'
-    - 'LICENSE-*'
-    tags-ignore:
-    - '*.*.*'
+    # paths-ignore:
+    # - '*.md'
+    # - '*.sh'
+    # - 'Dockerfile'
+    # - 'Makefile'
+    # - 'LICENSE-*'
+    # tags-ignore:
+    # - '*.*.*'
 
 jobs:
   build:
