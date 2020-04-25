@@ -32,6 +32,11 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
+    - name: Get tag name
+      id: tag
+      run: |
+        echo ::set-output name=version::${GITHUB_REF/refs\/tags\//}
+
     - name: Install musl tools
       if: matrix.target == 'x86_64-unknown-linux-musl'
       run: |
@@ -59,7 +64,7 @@ jobs:
     - name: Create artifact
       id: create-artifact
       run: |
-        tar -acvf ${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
+        tar -acvf ${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
         echo "::set-output name=changelog::$(changelog)"
 
     - name: Create Release
@@ -68,8 +73,8 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: ${{ github.ref }}
-        release_name: ${{ github.ref }}
+        tag_name: ${{ steps.tag.outputs.version }}
+        release_name: ${{ steps.tag.outputs.version }}
         draft: false
         prerelease: false
         body: ${{ steps.create-artifact.outputs.changelog }}
@@ -79,6 +84,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ steps.create-release.outputs.upload_url }}
-        asset_path: ./${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz
-        asset_name: ${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz
+        asset_path: ./${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz
+        asset_name: ${{ env.NAME }}-${{ steps.tag.outputs.version }}-${{ matrix.target }}.tar.gz
         asset_content_type: application/gzip
