@@ -20,17 +20,15 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
       with:
-        args:
-        - bash
-        - -c
-        - |
+        args: |
+          bash -c '
           version=${GITHUB_REF/refs\/tags\//}
           echo "::set-output name=version::${version}"
 
           git clone -b ${version} https://github.com/${GITHUB_REPOSITORY}.git && cd ${NAME}
           changelog="$(changelog)"
           changelog="${changelog//$'\n'/'%0A'}"
-          echo "::set-output name=changelog::${changelog}"
+          echo "::set-output name=changelog::${changelog}"'
 
     - name: Create Release
       id: create_release
