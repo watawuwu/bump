@@ -5,6 +5,9 @@ on:
     paths:
       - '**/Cargo.toml'
       - '**/Cargo.lock'
+    tags-ignore:
+    - '*.*.*'
+
 jobs:
   build:
     runs-on: ubuntu-latest

@@ -4,6 +4,7 @@ on:
   push:
     tags:
      - '*.*.*'
+
 env:
   NAME: bump
 
@@ -52,7 +53,7 @@ jobs:
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
-        command: release build
+        command: build
         args: --release --target=${{ matrix.target }}
 
     - name: Create artifact

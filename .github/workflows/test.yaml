@@ -9,6 +9,8 @@ on:
     - 'Makefile'
     - 'Cargo.*'
     - 'LICENSE-*'
+    tags-ignore:
+    - '*.*.*'
 
 jobs:
   build:
