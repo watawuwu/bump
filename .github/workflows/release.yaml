@@ -25,7 +25,8 @@ jobs:
           version=${GITHUB_REF/refs\/tags\//}
           echo "::set-output name=version::${version}"
 
-          git clone -b ${version} https://github.com/${GITHUB_REPOSITORY}.git && cd ${NAME}
+          git clone -b ${version} https://github.com/${GITHUB_REPOSITORY}.git
+          cd ${NAME}
           changelog="$(changelog)"
           changelog="${changelog//$'\n'/'%0A'}"
           echo "::set-output name=changelog::${changelog}"'
