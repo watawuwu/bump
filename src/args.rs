@@ -1,8 +1,7 @@
-use crate::error::{AppError, Result};
 use crate::fs::*;
 use crate::version::Version;
+use anyhow::{bail, Error, Result};
 use atty::Stream;
-use failure::*;
 use std::convert::TryFrom;
 use std::convert::TryInto;
 use std::result;
@@ -135,7 +134,7 @@ impl SubCommand {
 }
 
 impl TryFrom<RawSubCommand> for SubCommand {
-    type Error = AppError;
+    type Error = Error;
 
     fn try_from(raw_sub: RawSubCommand) -> result::Result<Self, Self::Error> {
         let sub = match raw_sub {

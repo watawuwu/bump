@@ -1,5 +1,4 @@
-use crate::error::AppError;
-use failure::*;
+use anyhow::{anyhow, bail, Error};
 use lazy_static::lazy_static;
 use log::*;
 use regex::Regex;
@@ -19,11 +18,11 @@ pub struct Version {
 }
 
 impl FromStr for Version {
-    type Err = AppError;
+    type Err = Error;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let caps = PREFIX
             .captures(s)
-            .ok_or_else(|| format_err!("Can't find semver format. value: {}", s))?;
+            .ok_or_else(|| anyhow!("Can't find semver format. value: {}", s))?;
 
         let cap_pre = caps.name("prefix");
         let cap_ver = caps.name("version");

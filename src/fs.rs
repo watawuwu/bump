@@ -2,7 +2,7 @@ use std::fs::{self, File};
 use std::io::{BufReader, BufWriter, Read, Write};
 use std::path::Path;
 
-use crate::error::Result;
+use anyhow::Result;
 use std::io;
 
 #[allow(dead_code)]

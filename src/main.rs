@@ -1,12 +1,11 @@
 mod args;
-mod error;
 mod fs;
 mod version;
 
 use crate::args::{Args, SubCommand};
-use crate::error::Result;
 use log::*;
 
+use anyhow::Result;
 use std::env;
 use std::process::exit;
 
