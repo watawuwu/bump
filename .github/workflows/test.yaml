@@ -7,7 +7,6 @@ on:
     - '*.sh'
     - 'Dockerfile'
     - 'Makefile'
-    - 'Cargo.*'
     - 'LICENSE-*'
     tags-ignore:
     - '*.*.*'
