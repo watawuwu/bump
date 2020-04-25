@@ -1,7 +1,6 @@
-use assert_cmd::prelude::*;
+use assert_cmd::Command;
 use exitcode;
 use predicates::prelude::*;
-use std::process::Command;
 
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
@@ -56,8 +55,7 @@ fn ng() -> Result<()> {
 fn stdin_input_ok() -> Result<()> {
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["patch"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
@@ -65,8 +63,7 @@ fn stdin_input_ok() -> Result<()> {
 
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["minor"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
@@ -74,8 +71,7 @@ fn stdin_input_ok() -> Result<()> {
 
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["major"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
@@ -88,8 +84,7 @@ fn stdin_input_ok() -> Result<()> {
 fn hyphen_ok() -> Result<()> {
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["patch", "-"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
@@ -97,8 +92,7 @@ fn hyphen_ok() -> Result<()> {
 
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["minor", "-"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
@@ -106,8 +100,7 @@ fn hyphen_ok() -> Result<()> {
 
     let mut cmd = Command::cargo_bin("bump")?;
     cmd.args(&["major", "-"]);
-    cmd.with_stdin()
-        .buffer("0.1.0")
+    cmd.write_stdin("0.1.0")
         .assert()
         .success()
         .code(exitcode::OK)
