@@ -1,6 +1,14 @@
 name: Test
 
-on: [push, pull_request]
+on:
+  push:
+    paths-ignore:
+    - '*.md'
+    - '*.sh'
+    - 'Dockerfile'
+    - 'Makefile'
+    - 'Cargo.*'
+    - 'LICENSE-*'
 
 jobs:
   build:
