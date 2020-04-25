@@ -1,0 +1,77 @@
+name: Release
+
+on:
+  push:
+    tags:
+     - '*.*.*'
+env:
+  NAME: bump
+
+jobs:
+  build:
+    strategy:
+      matrix:
+        target:
+        - x86_64-pc-windows-msvc
+        - x86_64-unknown-linux-gnu
+        - x86_64-unknown-linux-musl
+        - x86_64-apple-darwin
+        include:
+        - target: x86_64-pc-windows-msvc
+          os: windows-latest
+        - target: x86_64-unknown-linux-gnu
+          os: ubuntu-latest
+        - target: x86_64-unknown-linux-musl
+          os: ubuntu-latest
+        - target: x86_64-apple-darwin
+          os: macos-latest
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - uses: actions-rs/toolchain@v1
+      with:
+        profile: minimal
+        toolchain: stable
+        override: true
+
+    - name: Install changelog
+      uses: actions-rs/install@v0.1
+      with:
+        crate: changelog
+        version: latest
+
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: release build
+        args: --release --target=${{ matrix.target }}
+
+    - name: Create artifact
+      id: create-artifact
+      run: |
+        tar -acvf ${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
+        echo "::set-output name=changelog::$(changelog)"
+
+    - name: Create Release
+      id: create-release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: ${{ github.ref }}
+        draft: false
+        prerelease: false
+        body: ${{ steps.create-artifact.outputs.changelog }}
+
+    - uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create-release.outputs.upload_url }}
+        asset_path: ./${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz
+        asset_name: ${{ env.NAME }}-${{ github.ref }}-${{ matrix.target }}.tar.gz
+        asset_content_type: application/gzip
