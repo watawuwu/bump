@@ -14,21 +14,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Install changelog
-      uses: actions-rs/install@v0.1
-      with:
-        crate: changelog
-        version: latest
-
     - name: Create meta
       id: create_meta
-      run: |
-        version=${GITHUB_REF/refs\/tags\//}
-        echo "::set-output name=version::${version}"
+      uses: docker://watawuwu/changelog:latest
+      env:
+        GITHUB_TOKEN: ${{ secrets.REPO_GITHUB_TOKEN }}
+      with:
+        args:
+        - bash
+        - -c
+        - |
+          version=${GITHUB_REF/refs\/tags\//}
+          echo "::set-output name=version::${version}"
 
-        changelog="$(changelog)"
-        changelog="${changelog//$'\n'/'%0A'}"
-        echo "::set-output name=changelog::${changelog}"
+          git clone -b ${version} https://github.com/${GITHUB_REPOSITORY}.git && cd ${NAME}
+          changelog="$(changelog)"
+          changelog="${changelog//$'\n'/'%0A'}"
+          echo "::set-output name=changelog::${changelog}"
 
     - name: Create Release
       id: create_release
