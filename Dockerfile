@@ -1,4 +1,4 @@
-FROM watawuwu/rust:1.36 AS builder
+FROM watawuwu/rust:1.43.0 AS builder
 
 ADD Makefile .
 ADD Cargo.toml .
@@ -12,7 +12,7 @@ COPY . .
 
 RUN make build CARGO_SUB_OPTIONS="--target x86_64-unknown-linux-musl --release"
 
-FROM alpine:3.10
+FROM alpine:3.11
 
 RUN apk upgrade --update-cache --available && \
   apk add openssl && \
