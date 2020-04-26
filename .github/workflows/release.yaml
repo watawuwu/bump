@@ -9,8 +9,8 @@ env:
   NAME: bump
 
 jobs:
-  release:
-    name: Create Github Release
+  create_github_release:
+    name: Create Github release
     runs-on: ubuntu-latest
 
     steps:
@@ -20,7 +20,7 @@ jobs:
           version=${GITHUB_REF/refs\/tags\//}
           echo "::set-output name=version::${version}"
 
-    - name: Create Release
+    - name: Create release
       id: create_release
       uses: actions/create-release@v1
       env:
@@ -31,16 +31,17 @@ jobs:
         draft: false
         prerelease: false
 
-    - name: Output Release URL File
+    - name: Output release URL file
       run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
 
-    - name: Save Release URL File for publish
+    - name: Save release URL file for publish
       uses: actions/upload-artifact@v1
       with:
         name: release
         path: release_url.txt
 
-  publish:
+  build_and_publish:
+    name: Build and publish
     needs: [release]
     strategy:
       matrix:
@@ -59,7 +60,8 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Setup code
+      uses: actions/checkout@v2
 
     - name: Create meta
       id: create_meta
@@ -72,7 +74,8 @@ jobs:
       run: |
         sudo apt install -qq -y musl-tools --no-install-recommends
 
-    - uses: actions-rs/toolchain@v1
+    - name: Setup Rust toolchain
+      uses: actions-rs/toolchain@v1
       with:
         profile: minimal
         toolchain: stable
@@ -90,12 +93,12 @@ jobs:
       run: |
         tar -acvf ${{ env.NAME }}-${{ steps.create_meta.outputs.version }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
 
-    - name: Load Release URL File
+    - name: Load release URL file
       uses: actions/download-artifact@v1
       with:
         name: release
 
-    - name: Get Release File Name & Upload URL
+    - name: Get release file name & upload URL
       id: get_release_info
       run: |
         upload_url=$(cat release/release_url.txt)

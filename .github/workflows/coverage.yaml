@@ -1,0 +1,54 @@
+name: Code Coverage
+
+on:
+  push:
+    paths-ignore:
+    - '*.md'
+    - '*.sh'
+    - 'Dockerfile'
+    - 'Makefile'
+    - 'LICENSE-*'
+    tags-ignore:
+    - '*.*.*'
+    # workaround https://github.community/t5/GitHub-Actions/Using-on-push-tags-ignore-and-paths-ignore-together/td-p/38559
+    branches:
+    - '**'
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Setup code
+        uses: actions/checkout@v2
+
+      - name: Setup rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          override: true
+
+      - name: Clean cargo cache
+        uses: actions-rs/cargo@v1
+        with:
+          command: clean
+
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-features --no-fail-fast
+        env:
+          CARGO_INCREMENTAL: '0'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads'
+
+      - name: Coverage
+        id: coverage
+        # TODO https://github.com/actions-rs/grcov/issues/51
+        # uses: actions-rs/grcov@v0.1
+        uses: watawuwu/grcov@fix/find-covfiles
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ${{ steps.coverage.outputs.report }}
+          fail_ci_if_error: true
