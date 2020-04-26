@@ -42,7 +42,7 @@ jobs:
 
   build_and_publish:
     name: Build and publish
-    needs: [release]
+    needs: [create_github_release]
     strategy:
       matrix:
         target:
