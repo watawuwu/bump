@@ -2,7 +2,8 @@
 
 bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 
-![Test](https://github.com/watawuwu/bump/workflows/Test/badge.svg?branch=master)
+![test](https://github.com/watawuwu/bump/workflows/Test/badge.svg?branch=master)
+[![codecov](https://codecov.io/gh/watawuwu/bump/branch/master/graph/badge.svg)](https://codecov.io/gh/watawuwu/bump)
 [![Latest version](https://img.shields.io/crates/v/bump-bin.svg)](https://crates.io/crates/bump-bin)
 [![Documentation](https://docs.rs/bump-bin/badge.svg)](https://docs.rs/crate/bump-bin)
 [![Docker](https://img.shields.io/docker/build/watawuwu/bump.svg)](https://cloud.docker.com/repository/docker/watawuwu/bump/)
