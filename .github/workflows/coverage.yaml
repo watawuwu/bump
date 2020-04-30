@@ -14,7 +14,7 @@ on:
     branches:
     - '**'
 jobs:
-  build:
+  code_coverage:
     runs-on: ubuntu-latest
     steps:
       - name: Setup code

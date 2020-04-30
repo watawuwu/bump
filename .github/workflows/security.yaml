@@ -14,7 +14,7 @@ on:
     - cron: '0 0 * * 6'
 
 jobs:
-  build:
+  security_audit:
     runs-on: ubuntu-latest
     steps:
       - name: Setup code
