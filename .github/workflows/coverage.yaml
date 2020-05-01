@@ -23,7 +23,9 @@ jobs:
       - name: Setup rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          # for no-landing-pads
+          # https://github.com/mozilla/grcov/issues/427
+          toolchain: nightly-2020-04-29
           override: true
 
       - name: Clean cargo cache
