@@ -83,33 +83,21 @@ jobs:
         command: build
         args: --release --target=${{ matrix.target }}
 
-    - name: Create artifact for Windows
-      id: create_artifact_windows
-      if: matrix.os == 'windows-latest'
-      run: |
-        tar -acvf ${{ env.NAME }}-${{ steps.get_tag.outputs.tag }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}.exe
-
     - name: Create artifact
-      id: create_artifact
-      if: matrix.os != 'windows-latest'
+      shell: bash -x {0}
       run: |
-        tar -acvf ${{ env.NAME }}-${{ steps.get_tag.outputs.tag }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}
+        tar -acvf ${{ env.NAME }}-${{ steps.get_tag.outputs.tag }}-${{ matrix.target }}.tar.gz -C target/${{ matrix.target }}/release ${{ env.NAME }}{,.exe}
+        set -e
+        ls -la ${{ env.NAME }}-${{ steps.get_tag.outputs.tag }}-${{ matrix.target }}.tar.gz
 
     - name: Load release URL file
       uses: actions/download-artifact@v1
       with:
         name: release
 
-    - name: Get release file name & upload URL for Windows
-      id: get_release_info_windows
-      if: matrix.os == 'windows-latest'
-      run: |
-        Set-Variable -Name "upload_url" -Value $(cat release/release_url.txt)
-        echo "::set-env name=UPLOAD_URL::$upload_url"
-
     - name: Get release file name & upload URL
-      if: matrix.os != 'windows-latest'
       id: get_release_info
+      shell: bash
       run: |
         upload_url=$(cat release/release_url.txt)
         echo "::set-env name=UPLOAD_URL::$upload_url"
