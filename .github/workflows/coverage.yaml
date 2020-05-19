@@ -23,9 +23,7 @@ jobs:
       - name: Setup rust toolchain
         uses: actions-rs/toolchain@v1
         with:
-          # for no-landing-pads
-          # https://github.com/mozilla/grcov/issues/427
-          toolchain: nightly-2020-04-29
+          toolchain: nightly
           override: true
 
       - name: Clean cargo cache
@@ -40,13 +38,11 @@ jobs:
           args: --all-features --no-fail-fast
         env:
           CARGO_INCREMENTAL: '0'
-          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zno-landing-pads'
+          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
 
       - name: Coverage
         id: coverage
-        # TODO https://github.com/actions-rs/grcov/issues/51
-        # uses: actions-rs/grcov@v0.1
-        uses: watawuwu/grcov@fix/find-covfiles
+        uses: watawuwu/grcov-action@v0
 
       - name: Upload coverage
         uses: codecov/codecov-action@v1
