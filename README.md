@@ -74,8 +74,6 @@ release-1.0.1
 - Other usage
 
 ```
-Wataru Matsui <watawuwu@3bi.tech>
-
 USAGE:
     bump <SUBCOMMAND>
 
