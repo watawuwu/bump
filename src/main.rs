@@ -45,7 +45,7 @@ fn main() {
 mod tests {
     use super::*;
     use crate::fs::*;
-    use tempdir::TempDir;
+    use tempfile::tempdir;
 
     fn test_ok(row_args: Vec<&str>, expect: &str) {
         let args = row_args.into_iter().map(String::from).collect();
@@ -223,10 +223,10 @@ mod tests {
     }
 
     #[test]
-    fn file_ok() {
+    fn file_ok() -> Result<()> {
         let version = "0.0.0";
 
-        let tmp_dir = TempDir::new("").unwrap();
+        let tmp_dir = tempdir()?;
         let version_file = tmp_dir.path().join("version.txt");
         write_file(&version_file, version.as_bytes()).unwrap();
 
@@ -241,5 +241,7 @@ mod tests {
         let expect = "1.0.0";
         let args = vec!["bump", "major", "-f", version_file.to_str().unwrap()];
         test_ok(args, expect);
+
+        Ok(())
     }
 }

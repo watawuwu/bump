@@ -35,6 +35,6 @@ atty              = "0.2"
 default = []
 
 [dev-dependencies]
-tempdir    = "0.3"
+tempfile   = "3.1"
 assert_cmd = "1.0"
 predicates = "1.0"
