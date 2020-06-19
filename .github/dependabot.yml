@@ -1,0 +1,18 @@
+version: 2
+updates:
+- package-ecosystem: cargo
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: '20:00'
+  open-pull-requests-limit: 10
+  reviewers:
+  - watawuwu
+- package-ecosystem: docker
+  directory: "/"
+  schedule:
+    interval: weekly
+    time: '20:00'
+  open-pull-requests-limit: 10
+  reviewers:
+  - watawuwu
