@@ -12,7 +12,7 @@ COPY . .
 
 RUN make build CARGO_SUB_OPTIONS="--target x86_64-unknown-linux-musl --release"
 
-FROM alpine:3.12.0
+FROM alpine:3.12.1
 
 RUN apk upgrade --update-cache --available && \
   apk add openssl && \
