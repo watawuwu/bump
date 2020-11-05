@@ -1,4 +1,4 @@
-FROM watawuwu/rust:1.46.0 AS builder
+FROM watawuwu/rust:1.47.0 AS builder
 
 ADD Makefile .
 ADD Cargo.toml .
