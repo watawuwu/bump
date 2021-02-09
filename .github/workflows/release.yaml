@@ -100,7 +100,7 @@ jobs:
       shell: bash
       run: |
         upload_url=$(cat release/release_url.txt)
-        echo "::set-env name=UPLOAD_URL::$upload_url"
+        echo "UPLOAD_URL=$upload_url" >> $GITHUB_ENV
 
     - uses: actions/upload-release-asset@v1
       env:
