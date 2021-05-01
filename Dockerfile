@@ -12,7 +12,7 @@ COPY . .
 
 RUN make deps release-build CARGO_BUILD_TARGET="x86_64-unknown-linux-musl" CARGO_BUILD_TARGET_DIR="/usr/local/target"
 
-FROM alpine:3.13.4
+FROM alpine:3.13.5
 
 RUN apk upgrade --update-cache --available && \
   apk add openssl && \
