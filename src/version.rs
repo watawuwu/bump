@@ -1,8 +1,9 @@
+use anyhow::Result;
 use anyhow::{anyhow, bail, Error};
 use lazy_static::lazy_static;
 use log::*;
 use regex::Regex;
-use semver::{Identifier, Version as SemVer};
+use semver::{BuildMetadata, Prerelease, Version as SemVer};
 use std::fmt;
 use std::str::FromStr;
 
@@ -52,31 +53,40 @@ impl fmt::Display for Version {
 impl Version {
     pub fn bump_patch(&self) -> Version {
         let mut v = self.clone();
-        v.ver.increment_patch();
+        v.ver.patch += 1;
+        v.ver.pre = Prerelease::EMPTY;
+        v.ver.build = BuildMetadata::EMPTY;
         v
     }
 
     pub fn bump_minor(&self) -> Version {
         let mut v = self.clone();
-        v.ver.increment_minor();
+        v.ver.minor += 1;
+        v.ver.patch = 0;
+        v.ver.pre = Prerelease::EMPTY;
+        v.ver.build = BuildMetadata::EMPTY;
         v
     }
 
     pub fn bump_major(&self) -> Version {
         let mut v = self.clone();
-        v.ver.increment_major();
+        v.ver.major += 1;
+        v.ver.minor = 0;
+        v.ver.patch = 0;
+        v.ver.pre = Prerelease::EMPTY;
+        v.ver.build = BuildMetadata::EMPTY;
         v
     }
 
-    pub fn update_pre_release(&self, pre: impl Into<String>) -> Version {
+    pub fn update_pre_release(&self, pre: impl Into<String>) -> Result<Version> {
         let mut v = self.clone();
-        v.ver.pre = vec![Identifier::AlphaNumeric(pre.into())];
-        v
+        v.ver.pre = Prerelease::new(pre.into().as_str())?;
+        Ok(v)
     }
 
-    pub fn update_build(&self, build: impl Into<String>) -> Version {
+    pub fn update_build(&self, build: impl Into<String>) -> Result<Version> {
         let mut v = self.clone();
-        v.ver.build = vec![Identifier::AlphaNumeric(build.into())];
-        v
+        v.ver.build = BuildMetadata::new(build.into().as_str())?;
+        Ok(v)
     }
 }
