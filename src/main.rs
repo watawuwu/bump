@@ -16,8 +16,8 @@ fn run(row_args: Vec<String>) -> Result<String> {
         SubCommand::Patch { ver } => ver.bump_patch(),
         SubCommand::Minor { ver } => ver.bump_minor(),
         SubCommand::Major { ver } => ver.bump_major(),
-        SubCommand::Pre { pre, ver } => ver.update_pre_release(pre),
-        SubCommand::Build { build, ver } => ver.update_build(build),
+        SubCommand::Pre { pre, ver } => ver.update_pre_release(pre)?,
+        SubCommand::Build { build, ver } => ver.update_build(build)?,
     };
 
     debug!("version: {:?}", &version);

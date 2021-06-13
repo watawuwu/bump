@@ -36,6 +36,20 @@ fn ok() -> Result<()> {
     cmd.args(&["major", "0.1.0"]);
     cmd.assert().success().code(exitcode::OK).stdout("1.0.0\n");
 
+    let mut cmd = Command::cargo_bin("bump")?;
+    cmd.args(&["pre", "x.7.z.92", "0.1.0"]);
+    cmd.assert()
+        .success()
+        .code(exitcode::OK)
+        .stdout("0.1.0-x.7.z.92\n");
+
+    let mut cmd = Command::cargo_bin("bump")?;
+    cmd.args(&["build", "21AF26D3", "0.1.0"]);
+    cmd.assert()
+        .success()
+        .code(exitcode::OK)
+        .stdout("0.1.0+21AF26D3\n");
+
     Ok(())
 }
 
