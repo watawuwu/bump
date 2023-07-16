@@ -10,7 +10,7 @@ fn help_err() -> Result<()> {
     cmd.assert()
         .failure()
         .code(exitcode::USAGE)
-        .stderr(predicate::str::contains("USAGE"));
+        .stdout(predicate::str::contains("Usage"));
     Ok(())
 }
 
@@ -60,7 +60,7 @@ fn ng() -> Result<()> {
     cmd.assert()
         .failure()
         .code(exitcode::USAGE)
-        .stderr(predicate::str::contains("USAGE"));
+        .stderr(predicate::str::contains("Usage"));
     Ok(())
 }
 
@@ -96,7 +96,7 @@ fn stdin_input_ok() -> Result<()> {
 #[test]
 fn hyphen_ok() -> Result<()> {
     let mut cmd = Command::cargo_bin("bump")?;
-    cmd.args(&["patch", "-"]);
+    cmd.args(&["patch", "-f", "-"]);
     cmd.write_stdin("0.1.0")
         .assert()
         .success()
@@ -104,7 +104,7 @@ fn hyphen_ok() -> Result<()> {
         .stdout("0.1.1\n");
 
     let mut cmd = Command::cargo_bin("bump")?;
-    cmd.args(&["minor", "-"]);
+    cmd.args(&["minor", "-f", "-"]);
     cmd.write_stdin("0.1.0")
         .assert()
         .success()
@@ -112,7 +112,7 @@ fn hyphen_ok() -> Result<()> {
         .stdout("0.2.0\n");
 
     let mut cmd = Command::cargo_bin("bump")?;
-    cmd.args(&["major", "-"]);
+    cmd.args(&["major", "-f", "-"]);
     cmd.write_stdin("0.1.0")
         .assert()
         .success()

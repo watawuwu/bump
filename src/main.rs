@@ -1,25 +1,54 @@
 mod args;
-mod fs;
-mod version;
-
 use crate::args::{Args, SubCommand};
+use bump_bin::version::Version;
 use log::*;
 
-use anyhow::Result;
+use anyhow::{bail, Result};
+use clap::{Args as _, Command, FromArgMatches as _};
 use std::env;
 use std::process::exit;
 
 fn run(row_args: Vec<String>) -> Result<String> {
-    let args = Args::new(&row_args)?;
+    let cli = Command::new("bump");
+    let mut cli = Args::augment_args(cli);
 
-    let version = match args.sub {
-        SubCommand::Patch { ver } => ver.bump_patch(),
-        SubCommand::Minor { ver } => ver.bump_minor(),
-        SubCommand::Major { ver } => ver.bump_major(),
-        SubCommand::Pre { pre, ver } => ver.update_pre_release(pre)?,
-        SubCommand::Build { build, ver } => ver.update_build(build)?,
+    // Display on internal error
+    let help = cli.render_long_help();
+
+    let matches = cli.try_get_matches_from(row_args)?;
+    let args = Args::from_arg_matches(&matches)?;
+
+    let subcommand = move || -> Result<Version> {
+        let version = match args.sub {
+            SubCommand::Patch { file, ver } => {
+                let ver = Version::try_from((file, ver))?;
+                ver.bump_patch()
+            }
+            SubCommand::Minor { file, ver } => {
+                let ver = Version::try_from((file, ver))?;
+                ver.bump_minor()
+            }
+            SubCommand::Major { file, ver } => {
+                let ver = Version::try_from((file, ver))?;
+                ver.bump_major()
+            }
+            SubCommand::Pre { file, pre, ver } => {
+                let ver = Version::try_from((file, ver))?;
+                ver.update_pre_release(pre)?
+            }
+            SubCommand::Build { file, build, ver } => {
+                let ver = Version::try_from((file, ver))?;
+                ver.update_build(build)?
+            }
+        };
+
+        Ok(version)
     };
 
+    let version = match subcommand() {
+        Ok(v) => v,
+        Err(err) => bail!("{err}\n\n{help}"),
+    };
     debug!("version: {:?}", &version);
     Ok(version.to_string())
 }
@@ -30,13 +59,19 @@ fn main() {
     let args = env::args().collect::<Vec<String>>();
     let code = match run(args) {
         Ok(view) => {
-            println!("{}", view);
+            println!("{view}");
             exitcode::OK
         }
-        Err(err) => {
-            eprintln!("{}", err);
-            exitcode::USAGE
-        }
+        Err(err) => match err.downcast_ref::<clap::Error>() {
+            Some(err) => {
+                let _ = err.print();
+                exitcode::USAGE
+            }
+            None => {
+                eprintln!("{err}");
+                exitcode::USAGE
+            }
+        },
     };
     exit(code)
 }
@@ -44,7 +79,7 @@ fn main() {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::fs::*;
+    use bump_bin::fs::*;
     use tempfile::tempdir;
 
     fn test_ok(row_args: Vec<&str>, expect: &str) {
