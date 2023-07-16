@@ -30,7 +30,6 @@ jobs:
         rustup component add clippy
         rustup component add rustfmt
         rustup component add llvm-tools-preview
-        rustup target add ${{ matrix.target }}
         cargo install cargo-llvm-cov
 
     - name: Collect coverage data
