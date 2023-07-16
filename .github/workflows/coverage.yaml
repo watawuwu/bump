@@ -2,51 +2,43 @@ name: Code Coverage
 
 on:
   push:
-    paths-ignore:
-    - '*.md'
-    - '*.sh'
-    - 'Dockerfile'
-    - 'Makefile'
-    - 'LICENSE-*'
-    tags-ignore:
-    - '*.*.*'
-    # workaround https://github.community/t5/GitHub-Actions/Using-on-push-tags-ignore-and-paths-ignore-together/td-p/38559
-    branches:
-    - '**'
+
 jobs:
   code_coverage:
     runs-on: ubuntu-latest
     steps:
-      - name: Setup code
-        uses: actions/checkout@v2
+    - name: Setup code
+      uses: actions/checkout@v3
 
-      - name: Setup rust toolchain
-        uses: actions-rs/toolchain@v1
-        with:
-          toolchain: nightly
-          override: true
+    # https://github.com/actions/cache/blob/master/examples.md#rust---cargo
+    - name: Cache cargo files
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.cargo/bin/
+          ~/.cargo/registry/index/
+          ~/.cargo/registry/cache/
+          ~/.cargo/git/db/
+          target/
+        key: ${{ matrix.os }}-${{ matrix.target }}-cargo-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Clean cargo cache
-        uses: actions-rs/cargo@v1
-        with:
-          command: clean
+    - name: Setup Rust toolchain
+      run: |
+        rustup set profile minimal
+        rustup install stable
+        rustup override set stable
+        rustup component add clippy
+        rustup component add rustfmt
+        rustup component add llvm-tools-preview
+        rustup target add ${{ matrix.target }}
+        cargo install cargo-llvm-cov
 
-      - name: Test
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --all-features --no-fail-fast
-        env:
-          CARGO_INCREMENTAL: '0'
-          RUSTFLAGS: '-Zprofile -Ccodegen-units=1 -Cinline-threshold=0 -Clink-dead-code -Coverflow-checks=off -Zpanic_abort_tests -Cpanic=abort'
+    - name: Collect coverage data
+      run: cargo llvm-cov --all-features --lcov --output-path lcov.info
 
-      - name: Coverage
-        id: coverage
-        uses: watawuwu/grcov-action@v0
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v1
-        with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ${{ steps.coverage.outputs.report }}
-          fail_ci_if_error: true
+    - name: Upload coverage
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: lcov.info
+        fail_ci_if_error: true
