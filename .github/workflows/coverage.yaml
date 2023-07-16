@@ -30,7 +30,9 @@ jobs:
         rustup component add clippy
         rustup component add rustfmt
         rustup component add llvm-tools-preview
+        cargo version
         cargo install cargo-llvm-cov
+
 
     - name: Collect coverage data
       run: cargo llvm-cov --all-features --lcov --output-path lcov.info
