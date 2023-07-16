@@ -153,7 +153,10 @@ mod tests {
 
     #[test]
     fn try_from_ng() {
-        let inputs = vec![(Some(String::from("test.md")), Some(String::from("x.x.x"))), (None, None)];
+        let inputs = vec![
+            (Some(String::from("test.md")), Some(String::from("x.x.x"))),
+            (None, None),
+        ];
         for (file, ver) in inputs {
             let result = Version::try_from((file, ver));
             assert!(matches!(result, Err(_)));
