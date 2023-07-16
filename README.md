@@ -6,7 +6,7 @@ bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 [![codecov](https://codecov.io/gh/watawuwu/bump/branch/master/graph/badge.svg)](https://codecov.io/gh/watawuwu/bump)
 [![Latest version](https://img.shields.io/crates/v/bump-bin.svg)](https://crates.io/crates/bump-bin)
 [![Documentation](https://docs.rs/bump-bin/badge.svg)](https://docs.rs/crate/bump-bin)
-[![Docker](https://img.shields.io/docker/build/watawuwu/bump.svg)](https://cloud.docker.com/repository/docker/watawuwu/bump/)
+[![Docker](https://img.shields.io/docker/pulls/watawuwu/bump)](https://hub.docker.com/repository/docker/watawuwu/bump/)
 ![License](https://img.shields.io/crates/l/bump-bin.svg)
 
 ## Getting Started
@@ -14,103 +14,103 @@ bump is a simple tool to increment [semver](https://semver.org/)-like versions.
 - Bump patch version
 
 ```
-❯❯ bump patch 1.0.0
+$ bump patch 1.0.0
 1.0.1
 ```
 
 - Bump minor version
 
 ```
-❯❯ bump minor 1.0.0
+$ bump minor 1.0.0
 1.1.0
 ```
 
 - Bump major version
 
 ```
-❯❯ bump major 1.0.0
+$ bump major 1.0.0
 2.0.0
 ```
 
 - Replace pre release version
 
 ```
-❯❯ bump pre beta.0 1.0.0-alpha.0
+$ bump pre beta.0 1.0.0-alpha.0
 1.0.0-beta.0
 ```
 
 - Replace build release version
 
 ```
-❯❯ bump build 20190720CCDD 1.0.0+20190720AABB
+$ bump build 20190720CCDD 1.0.0+20190720AABB
 1.0.0+20190720CCDD
 ```
 
 - If semver has the version prefix char, bump ignore the prefix.
 
 ```
-❯❯ bump patch v1.0.0
+$ bump patch v1.0.0
 v1.0.1
 
-❯❯ bump patch release-1.0.1
+$ bump patch release-1.0.1
 release-1.0.1
 ```
 
 - Can specify file
 
 ```
-❯❯ echo 1.0.0 > version.txt
-❯❯ bump patch -f version.txt
+$ echo 1.0.0 > version.txt
+$ bump patch -f version.txt
 1.0.1
 ```
 
 - Can read from pipeline
 
 ```
-❯❯ echo 1.0.0 | bump patch
+$ echo 1.0.0 | bump patch
 1.0.1
 ```
 
 - Other usage
 
 ```
-USAGE:
-    bump <SUBCOMMAND>
+Increments version with semver specification
 
-FLAGS:
-    -h, --help       Prints help information
-    -V, --version    Prints version information
+Usage: bump <COMMAND>
 
-SUBCOMMANDS:
-    build    Replace build metadata
-    help     Prints this message or the help of the given subcommand(s)
-    major    Increment major version
-    minor    Increment minor version
-    patch    Increment patch version
-    pre      Replace pre-release version
+Commands:
+  patch
+          Increment patch version
+  minor
+          Increment minor version
+  major
+          Increment major version
+  pre
+          Replace pre-release version
+  build
+          Replace build metadata
+  help
+          Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help
+          Print help
+  -V, --version
+          Print version
 ```
 
 ### Installing
 
-- Install binary directly
-
-```
-❯❯ curl --tlsv1.2 -sSf https://raw.githubusercontent.com/watawuwu/bump/master/install.sh | sh
-```
-
-- Compile and install
-
-```
-❯❯ git clone https://github.com/watawuwu/bump.git && cd bump
-
-❯❯ make install
-```
 
 - Install with cargo
 
 ```
-❯❯ cargo install bump-bin
+$ cargo install bump-bin
 ```
+
+- Downloads assets from Github release
+
+https://github.com/watawuwu/bump/releases/latest
 
 ## Contributing
 

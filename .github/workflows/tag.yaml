@@ -1,0 +1,40 @@
+name: Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      level:
+        description: 'Version Level'
+        required: true
+        default: 'minor'
+        type: choice
+        options:
+        - major
+        - minor
+        - patch
+
+jobs:
+  publish:
+    name: Publish creates.io(with git tag)
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Setup code
+      uses: actions/checkout@v3
+      # Fetch all histories and tags to create release note
+      with: { fetch-depth: 0 }
+
+    - name: Setup release tools
+      run: |
+        url=$(gh release view -R crate-ci/cargo-release --json assets --jq '.assets[] | select(.name | contains("linux")) | .url')
+        curl -fsSL $url -o- | tar xz -C ~/.cargo/bin
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Publish creates.io(with git tag)
+      run: |
+        git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        cargo release ${{ github.event.inputs.level }} --execute --no-confirm -v
+      env:
+        CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}

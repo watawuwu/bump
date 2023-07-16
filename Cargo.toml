@@ -4,7 +4,7 @@ version     = "0.3.3"
 authors     = ["Wataru Matsui <watawuwu@3bi.tech>"]
 exclude     = ["examples/*", "tests/*", "benches/*", "*.png", "perf/*", "assets", "Makefile", "tmp.rs"]
 readme      = "README.md"
-edition     = "2018"
+edition     = "2021"
 license     = "MIT OR Apache-2.0"
 description = "Increments version with semver specification"
 repository  = "https://github.com/watawuwu/bump"
@@ -21,20 +21,16 @@ is-it-maintained-open-issues      = { repository = "watawuwu/bump", service = "g
 maintenance                       = { status = "passively-maintained" }
 
 [dependencies]
-anyhow            = "1"
-log               = "0"
-pretty_env_logger = "0"
-structopt         = "0"
-semver            = "1"
-regex             = "1"
-lazy_static       = "1"
-exitcode          = "1"
-atty              = "0"
-
-[features]
-default = []
+anyhow              = "1"
+log                 = "0"
+pretty_env_logger   = "0"
+clap                = { version = "4", features = ["derive", "env"] }
+semver              = "1"
+regex               = "1"
+once_cell           = "1"
+exitcode            = "1"
 
 [dev-dependencies]
 tempfile   = "3"
-assert_cmd = "1"
-predicates = "1"
+assert_cmd = "2"
+predicates = "3"
