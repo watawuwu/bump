@@ -4,13 +4,24 @@ use predicates::prelude::*;
 type Result<T> = std::result::Result<T, Box<dyn std::error::Error>>;
 
 #[test]
-fn help_err() -> Result<()> {
+fn help_ok() -> Result<()> {
     let mut cmd = Command::cargo_bin("bump")?;
-    cmd.arg("-h");
+    cmd.arg("--help");
     cmd.assert()
-        .failure()
-        .code(exitcode::USAGE)
+        .success()
+        .code(exitcode::OK)
         .stdout(predicate::str::contains("Usage"));
+    Ok(())
+}
+
+#[test]
+fn version_ok() -> Result<()> {
+    let mut cmd = Command::cargo_bin("bump")?;
+    cmd.arg("--version");
+    cmd.assert()
+        .success()
+        .code(exitcode::OK)
+        .stdout(predicate::str::contains("bump"));
     Ok(())
 }
 

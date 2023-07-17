@@ -4,7 +4,7 @@ use bump_bin::version::Version;
 use log::*;
 
 use anyhow::{bail, Result};
-use clap::{Args as _, Command, FromArgMatches as _};
+use clap::{error::ErrorKind as clapErrorKind, Args as _, Command, FromArgMatches as _};
 use std::env;
 use std::process::exit;
 
@@ -65,7 +65,10 @@ fn main() {
         Err(err) => match err.downcast_ref::<clap::Error>() {
             Some(err) => {
                 let _ = err.print();
-                exitcode::USAGE
+                match err.kind() {
+                    clapErrorKind::DisplayHelp | clapErrorKind::DisplayVersion => exitcode::OK,
+                    _ => exitcode::USAGE,
+                }
             }
             None => {
                 eprintln!("{err}");
