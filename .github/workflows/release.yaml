@@ -43,7 +43,7 @@ jobs:
         CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
 
     - name: Create github release
-       run: gh release create ${{ steps.publish.outputs.tag }} --generate-notes
+      run: gh release create ${{ steps.publish.outputs.tag }} --generate-notes
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
