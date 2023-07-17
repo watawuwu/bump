@@ -13,6 +13,9 @@ on:
         - minor
         - patch
 
+env:
+  NAME: bump
+
 jobs:
   release:
     name: Publish creates.io and create github release
