@@ -83,7 +83,7 @@ mod tests {
         let file = "not_found.txt";
         let tmp_dir = tempdir()?;
         let tmp_file = tmp_dir.path().join(file);
-        let actual = read_file(&tmp_file);
+        let actual = read_file(tmp_file);
         assert!(actual.is_err());
         Ok(())
     }
@@ -93,7 +93,7 @@ mod tests {
         let file = "write_test.txt";
         let tmp_dir = tempdir()?;
         let tmp_file = tmp_dir.path().join(file);
-        let actual = write_file(&tmp_file, b"write");
+        let actual = write_file(tmp_file, b"write");
         assert!(actual.is_ok());
         Ok(())
     }

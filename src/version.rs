@@ -159,7 +159,7 @@ mod tests {
         ];
         for (file, ver) in inputs {
             let result = Version::try_from((file, ver));
-            assert!(matches!(result, Err(_)));
+            assert!(result.is_err());
         }
     }
 }
