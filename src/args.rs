@@ -1,7 +1,16 @@
+use clap::builder::{styling, Styles};
 use clap::{Parser, Subcommand};
 
+fn help_styles() -> Styles {
+    styling::Styles::styled()
+        .header(styling::AnsiColor::Green.on_default() | styling::Effects::BOLD)
+        .usage(styling::AnsiColor::Green.on_default() | styling::Effects::BOLD)
+        .literal(styling::AnsiColor::Blue.on_default() | styling::Effects::BOLD)
+        .placeholder(styling::AnsiColor::Cyan.on_default())
+}
+
 #[derive(Parser)]
-#[command(author, version, about, next_line_help = true, long_about = None)]
+#[command(author, version, about, next_line_help = true, long_about = None, styles(help_styles()))]
 pub struct Args {
     #[command(subcommand)]
     pub(crate) sub: SubCommand,
