@@ -25,7 +25,7 @@ jobs:
 
     # https://github.com/actions/cache/blob/master/examples.md#rust---cargo
     - name: Cache cargo files
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: |
           ~/.cargo/bin/
