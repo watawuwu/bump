@@ -26,7 +26,7 @@ jobs:
 
     steps:
     - name: Setup code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       # Fetch all histories and tags to create release note
       with: { fetch-depth: 0 }
 
@@ -70,7 +70,7 @@ jobs:
 
     steps:
     - name: Setup code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Rust toolchain
       run: |

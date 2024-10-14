@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Setup code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     # https://github.com/actions/cache/blob/master/examples.md#rust---cargo
     # https://www.reddit.com/r/learnrust/comments/lexewr/the_difference_in_behaviour_when_running_cargo/
