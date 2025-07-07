@@ -36,8 +36,8 @@ impl FromStr for Version {
             _ => bail!("Can't find semver format. value: {}", s),
         };
 
-        debug!("prefix: {}", prefix);
-        debug!("version: {}", version);
+        debug!("prefix: {prefix}");
+        debug!("version: {version}");
 
         Ok(Version {
             prefix: prefix.to_string(),
